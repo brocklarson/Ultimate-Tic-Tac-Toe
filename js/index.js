@@ -15,7 +15,7 @@ newGameModalBackground.addEventListener('click', closeNewGameModal);
 
 function initializeMenu() {
     continueGameButton.classList.remove('show');
-    if(savedGameExist) continueGameButton.classList.add('show');
+    if (savedGameExist) continueGameButton.classList.add('show');
 }
 
 function openNewGameModal() {
@@ -29,18 +29,17 @@ function playNormalMode() {
     conquestMode = false;
     localStorage.conquestMode = conquestMode;
     localStorage.setItem('savedGameExist', false);
-    window.location.href = 'gameboard.html';
+    window.location.href = 'html/gameboard.html';
 }
 
 function playConquestMode() {
     conquestMode = true;
     localStorage.conquestMode = conquestMode;
     localStorage.setItem('savedGameExist', false);
-    window.location.href = 'gameboard.html';
+    window.location.href = 'html/gameboard.html';
 }
 
 function closeNewGameModal() {
     newGameModal.classList.remove('show');
     newGameModalBackground.classList.remove('show');
 }
-
