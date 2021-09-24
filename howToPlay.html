@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="getTheme.js" defer></script>
+    <script src="howToPlay.js" defer></script>
+    <title>Ultimate Tic-Tac-Toe</title>
+</head>
+<body>
+    <div class="how-to-play-container">
+        <div id="howToPlayGameIndicators" class="how-to-play-game-indicators">
+            <div id="howToPlayTurnIndicator" class="how-to-play-turn-indicator X"></div>
+            <div id='howToPlayConquestModeIndicator' class='how-to-play-conquest-mode-indicator'>
+                <p></p>
+            </div>
+            <div id="howToPlaySectionIndicator" class="how-to-play-playable-section-indicator">
+                <p>Top<br>Right</p>
+            </div>
+        </div>
+        <div class="how-to-play-board-whole" id="howToPlayBoardWhole">
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+            <div class="how-to-play-board-segment">
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+                <div class="how-to-play-cell"></div>
+            </div>
+        </div>
+        <div class="how-to-play-text-container">
+            <p id="howToPlayText"></p>
+        </div>
+        <div class="how-to-play-arrows-container">
+            <button id="howToPlayLeftArrow"><div class="how-to-play-arrow left hide"></div></button>
+            <button id="howToPlayRightArrow"><div class="how-to-play-arrow right"></div></button>
+        </div>
+
+        <button class="back-button"><a href="index.html">Back</a></button>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js" defer></script>
+    <script src="getTheme.js" async></script>
+    <title>Ultimate Tic-Tac-Toe</title>
+</head>
+<body>
+    <div class="main-menu-container" id="mainMenuContainer">
+        <div class= "game-title-container">
+            <h1 class="game-title">Ultimate<br/>Tic-Tac-Toe</h1>
+        </div>
+        <div class= "main-menu-button-container">
+            <button class = "continue-game-button" id="continueGameButton"><a href="gameboard.html">Continue</a></button>
+            <button id="newGameButton" ><a>New Game</a></button>
+            <button id="rulesButton"><a href="howToPlay.html">How To Play</a></button>
+            <button id="settingsButton"><a href="themes.html">Themes</a></button>
+        </div>
+    </div>
+    
+    <div class = "new-game-modal" id="newGameModal">
+        <button id="normalModeButton"><a>Normal</a></button>
+        <button id="conquestModeButton"><a>Conquest</a></button>
+    </div>
+    <div class = "new-game-modal-background" id="newGameModalBackground"></div>
+    
+</body>
+</html>
