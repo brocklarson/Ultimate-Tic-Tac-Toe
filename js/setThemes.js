@@ -10,14 +10,15 @@ const themes = (() => {
     function setTheme(event) {
         const btnIndex = getButton(event);
         theme = themeValues(btnIndex);
-        events.pub('themeChange', theme);
+        events.publish('themeChange', theme);
+        events.publish('variableChange', [theme, 'appTheme']);
     }
 
     function getButton(event) {
         return Array.from(themeButtons).findIndex(btn => btn === event.target);
     }
 
-    function themeValues(btnIndex) {
+    function themeValues(btnIndex = 2) {
         switch (btnIndex) {
             case 0:
                 return {

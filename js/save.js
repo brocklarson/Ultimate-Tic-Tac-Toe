@@ -1,19 +1,18 @@
 const storage = (() => {
 
     //Bind Events
-    events.sub('themeChange', updateTheme)
+    events.subscribe('variableChange', updateLocalStorage);
 
-    function updateTheme(theme) {
+    function updateLocalStorage(dataset) {
         if (storageAvailable('localStorage')) {
-            localStorage.setItem('appTheme', JSON.stringify(theme));
+            localStorage.setItem(dataset[1], JSON.stringify(dataset[0]));
         }
     }
 
     function getLocalStorage(data) {
         if (storageAvailable('localStorage')) {
             if (localStorage.getItem(data)) {
-                if (data === 'appTheme') return JSON.parse(localStorage.getItem(data));
-                else return localStorage.getItem(data);
+                return JSON.parse(localStorage.getItem(data));
             }
         }
     }
@@ -48,17 +47,12 @@ const storage = (() => {
 const gameParams = (() => {
     const root = document.documentElement;
     let theme = {};
-    // let savedGameExist = false;
-    // let conquestMode = false;
-    // let cellsClassList = [];
-    // let boardSectionsClassList = [];
-    // let xTurn = true;
-    // let playableSection = '';
 
     //Bind Events
-    events.sub('themeChange', setTheme)
+    events.subscribe('themeChange', setTheme)
 
-    function setTheme(theme = {}) {
+    function setTheme(data = {}) {
+        theme = data;
         root.style.setProperty("--base-background-color", theme.baseBackgroundColor || "linear-gradient(#F2D9CB,#33AAA1)");
         root.style.setProperty("--button-color", theme.buttonColor || "#0E535A");
         root.style.setProperty("--button-text-color", theme.buttonTextColor || "white");
