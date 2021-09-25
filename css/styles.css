@@ -2,6 +2,7 @@
 *::after,
 *::before {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -528,51 +529,51 @@ button:focus {
 }
 
 #themeOneButton {
-    background: linear-gradient(#FFACA8, #FADFC2);
+    background: linear-gradient(#FFACA8, #FADFC2) no-repeat;
 }
 
 #themeTwoButton {
-    background: linear-gradient(#F4B84D, #7B3C4A);
+    background: linear-gradient(#F4B84D, #7B3C4A) no-repeat;
 }
 
 #themeThreeButton {
-    background: linear-gradient(#F2D9CB, #33AAA1);
+    background: linear-gradient(#F2D9CB, #33AAA1) no-repeat;
 }
 
 #themeFourButton {
-    background: linear-gradient(#479948, #002A48);
+    background: linear-gradient(#479948, #002A48) no-repeat;
 }
 
 #themeFiveButton {
-    background: radial-gradient(#1FA897, #0D2E35);
+    background: radial-gradient(#1FA897, #0D2E35) no-repeat;
 }
 
 #themeSixButton {
-    background: linear-gradient(#243F4D 33%, #292929 33%);
+    background: linear-gradient(#243F4D 33%, #292929 33%) no-repeat;
 }
 
 #themeSevenButton {
-    background: linear-gradient(#004524 33%, #292929 33%);
+    background: linear-gradient(#004524 33%, #292929 33%) no-repeat;
 }
 
 #themeEightButton {
-    background: linear-gradient(#3791B5 33%, #EAEAEA 33%);
+    background: linear-gradient(#3791B5 33%, #EAEAEA 33%) no-repeat;
 }
 
 #themeNineButton {
-    background: linear-gradient(#00956F 33%, #EAEAEA 33%);
+    background: linear-gradient(#00956F 33%, #EAEAEA 33%) no-repeat;
 }
 
 #themeTenButton {
-    background: linear-gradient(#B53759 33%, #EAEAEA 33%);
+    background: linear-gradient(#B53759 33%, #EAEAEA 33%) no-repeat;
 }
 
 #themeElevenButton {
-    background: white;
+    background: white no-repeat;
 }
 
 #themeTwelveButton {
-    background: #222;
+    background: #222 no-repeat;
 }
 
 .back-button {
