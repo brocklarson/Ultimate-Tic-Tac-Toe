@@ -1,6 +1,5 @@
 const themes = (() => {
     const themeButtons = document.querySelectorAll(".themes-button-container button");
-    let theme = themeValues(2);
 
     //Bind Elements
     for (let i = 0; i < themeButtons.length; i++) {
@@ -9,7 +8,7 @@ const themes = (() => {
 
     function setTheme(event) {
         const btnIndex = getButton(event);
-        theme = themeValues(btnIndex);
+        const theme = themeValues(btnIndex);
         events.publish('themeChange', theme);
         events.publish('variableChange', [theme, 'appTheme']);
     }
