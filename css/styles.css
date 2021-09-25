@@ -15,7 +15,8 @@ body.waiting * {
 }
 
 :root {
-    /* --base-background-color: linear-gradient(#F2D9CB,#33AAA1);
+    /* v Themes changed in setTheme.js v */
+    --base-background-color: linear-gradient(#F2D9CB, #33AAA1);
     --button-color: #0E535A;
     --button-text-color: white;
     --button-border-color: none;
@@ -26,8 +27,8 @@ body.waiting * {
     --marker-hover-color: lightgrey;
     --section-win-marker-color: #0E535A;
     --game-info-text-color: #0E535A;
-    --title-color: black; */
-    /* ^ themes ^ */
+    --title-color: black;
+    /* ^ Themes changed in setTheme.js ^ */
     --winning-message-background-color: black;
     --board-size: 80vh;
     --cell-size: 8vh;
