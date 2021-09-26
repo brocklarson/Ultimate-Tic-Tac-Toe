@@ -5,16 +5,23 @@ const gameOverModule = (() => {
     const winningMessageTextElement = document.querySelector('[data-winning-message-text]');
     const restartButton = document.getElementById('restartButton');
 
-    //Bind Events
-    restartButton.addEventListener('click', initializeGame); //Combine this with resetGameWin and publish?
+    events.subscribe('endGame', endGame);
 
-    function resetGameWin() {
-        winningMessage.classList.remove('show');
-        console.log('here');
+    function endGame(data) {
+        const draw = data[0];
+        const currentClass = data[1];
+        if (draw) winningMessageTextElement.innerHTML = 'Draw';
+        if (!draw) winningMessageTextElement.innerHTML = currentClass + "'s Win!";
+        winningMessage.classList.add('show');
+        restartButton.addEventListener('click', restartGame);
     }
 
-    return { resetGameWin }
-});
+    function restartGame() {
+        winningMessage.classList.remove('show');
+        events.publish('restartGame', '');
+    }
+
+})();
 
 //GAME INDICATORS MODULE
 const gameIndicatorsModule = (() => {
@@ -22,7 +29,6 @@ const gameIndicatorsModule = (() => {
     const saveButton = document.getElementById('saveButton'); //Implement auto-saving
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicatorText = document.getElementById('playableSectionIndicatorText');
-    const conquestModeIndicator = document.getElementById('conquestModeIndicator');
     let conquestMode = (localStorage.conquestMode === 'true');
 
 
@@ -31,8 +37,12 @@ const gameIndicatorsModule = (() => {
     events.subscribe('playableSection', setPlayableSectionIndicatorText);
 
     (function setConquestMode() {
-        if (conquestMode) conquestModeIndicator.classList.add('show');
+        if (conquestMode) document.getElementById('conquestModeIndicator').classList.add('show');
     })();
+
+    function getConquestMode() {
+        return conquestMode;
+    }
 
     function setPlayableSectionIndicatorText(data) {
         const playedCellIndex = data[0];
@@ -77,11 +87,13 @@ const gameIndicatorsModule = (() => {
         }
     }
 
+    return { getConquestMode }
+
 })();
 
 //GAMEPLAY MODULE
 const gameboardModule = (() => {
-    //Cache DOM
+    //Variables
     const X_CLASS = 'X'; //For individual cells
     const O_CLASS = 'O'; //For individual cells
     const X_WIN_CLASS = 'X-win'; //For board section 
@@ -96,9 +108,6 @@ const gameboardModule = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
-    const gameBoard = document.getElementById('boardWhole');
-    const boardSection = document.querySelectorAll('.board-segment');
-    const cellElements = document.querySelectorAll('.cell');
 
     //Board Module?
     const savedGameExist = (localStorage.savedGameExist === 'true');
@@ -108,15 +117,23 @@ const gameboardModule = (() => {
 
 
     (function createBoard() {
+        const gameBoard = document.getElementById('boardWhole');
         for (i = 0; i < 9; i++) {
             let boardSegment = document.createElement('div');
-            boardWhole.appendChild(boardSegment).className = 'board-segment';
+            gameBoard.appendChild(boardSegment).className = 'board-segment';
             for (j = 0; j < 9; j++) {
                 let cell = document.createElement('div');
                 boardSegment.appendChild(cell).className = 'cell';
             }
         }
     })();
+
+    //Cache DOM
+    const boardSection = document.querySelectorAll('.board-segment');
+    const cellElements = document.querySelectorAll('.cell');
+
+    events.subscribe('restartGame', initializeGame);
+
 
     function initializeGame() {
         // if (savedGameExist) {
@@ -125,13 +142,12 @@ const gameboardModule = (() => {
         // }
 
         xTurn = true;
-        resetBoard();
+        setBoard();
         events.publish('playableSection', [null, true]);
-        gameOverModule.resetGameWin();
     }
     initializeGame();
 
-    function resetBoard() {
+    function setBoard() {
         boardSection.forEach(section => {
             section.classList.remove(X_CLASS, O_CLASS, X_WIN_CLASS, O_WIN_CLASS);
             section.classList.add(X_CLASS);
@@ -157,16 +173,16 @@ const gameboardModule = (() => {
 
         if (checkSectionWin(cell, currentClass, playedCellIndex)) placeSectionWinMarker(cell);
 
-        if (checkGameWin(currentWinCheckClass)) { endGame(false, currentClass); return; }
-        if (checkDraw()) { endGame(true, currentClass); return; }
+        if (checkGameWin(currentWinCheckClass)) { events.publish('endGame', [false, currentClass]); return; }
+        if (checkDraw()) { events.publish('endGame', [true, currentClass]); return; }
 
         switchTurn(currentClass);
         if (isSectionFull(playedCellIndex)) {
             setBoardHoverClass(playedCellIndex, true);
-            setPlayableSectionIndicatorText(playedCellIndex, true);
+            events.publish('playableSection', [playedCellIndex, true]);
         } else {
             setBoardHoverClass(playedCellIndex, false);
-            setPlayableSectionIndicatorText(playedCellIndex, false);
+            events.publish('playableSection', [playedCellIndex, false]);
         }
     }
 
@@ -215,7 +231,7 @@ const gameboardModule = (() => {
     }
 
     function checkSectionWin(cell, currentClass, playedCellIndex) {
-        if (!conquestMode) {
+        if (!gameIndicatorsModule.getConquestMode()) {
             if (cell.parentNode.classList.contains(X_WIN_CLASS) || cell.parentNode.classList.contains(O_WIN_CLASS)) {
                 return false;
             }
@@ -241,12 +257,6 @@ const gameboardModule = (() => {
         return [...cellElements].every(cell => {
             return cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS);
         })
-    }
-
-    function endGame(draw, currentClass) {
-        if (draw) winningMessageTextElement.innerHTML = 'Draw';
-        if (!draw) winningMessageTextElement.innerHTML = currentClass + "'s Win!";
-        winningMessage.classList.add('show');
     }
 
 })();

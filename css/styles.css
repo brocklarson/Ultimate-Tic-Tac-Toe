@@ -1,8 +1,8 @@
 *,
 *::after,
 *::before {
-    box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
 }
 
 body {
@@ -15,38 +15,38 @@ body.waiting * {
 }
 
 :root {
-    /* v Themes changed in setTheme.js v */
     --base-background-color: linear-gradient(#F2D9CB, #33AAA1);
-    --button-color: #0E535A;
-    --button-text-color: white;
+    --board-size: 80vh;
     --button-border-color: none;
+    --button-color: #0E535A;
     --button-hover-shadow: 0px 0px 10px black inset;
+    --button-text-color: white;
+    --cell-size: 8vh;
+    --default-font-family: sans-serif;
+    --game-info-text-color: #0E535A;
     --large-gameboard-color: black;
-    --small-gameboards-color: black;
     --marker-color: black;
     --marker-hover-color: lightgrey;
-    --section-win-marker-color: #0E535A;
-    --game-info-text-color: #0E535A;
-    --title-color: black;
-    /* ^ Themes changed in setTheme.js ^ */
-    --winning-message-background-color: black;
-    --board-size: 80vh;
-    --cell-size: 8vh;
     --marker-size: calc(var(--cell-size) * 0.9);
+    --section-win-marker-color: #0E535A;
     --section-win-marker-size: calc(var(--cell-size)*3);
-    --default-font-family: sans-serif;
+    --small-gameboards-color: black;
+    --title-color: black;
+    --winning-message-background-color: black;
+    /* v Themes changed in setTheme.js v */
+    /* ^ Themes changed in setTheme.js ^ */
 }
 
 a {
+    color: inherit;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
     height: 100%;
-    width: 100%;
-    text-decoration: none;
-    color: inherit;
+    justify-content: center;
     padding: .25em .5em;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
 }
 
 button:focus {
@@ -57,40 +57,40 @@ button:focus {
 /*GAMEPLAY BOARD*/
 
 .container {
-    display: flex;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    justify-content: space-evenly;
     align-content: space-around;
     align-items: center;
     background: var(--base-background-color);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 .in-game-info-container {
-    position: relative;
-    display: flex;
-    height: 20vh;
-    flex-direction: row;
-    justify-content: space-around;
     align-items: center;
+    display: flex;
+    flex-direction: row;
+    height: 20vh;
+    justify-content: space-around;
+    position: relative;
     width: var(--board-size);
 }
 
 .in-game-info-container button {
-    font-size: 2.5vh;
+    background-color: var(--button-color);
+    border-radius: 1vh;
+    border: solid 1px var(--button-border-color);
+    color: var(--button-text-color);
+    cursor: pointer;
     font-family: var(--default-font-family);
+    font-size: 2.5vh;
     font-weight: bold;
     height: 6vh;
     width: 22.5%;
-    background-color: var(--button-color);
-    border: solid 1px var(--button-border-color);
-    border-radius: 1vh;
-    color: var(--button-text-color);
-    cursor: pointer;
 }
 
 .in-game-info-container button:hover {
@@ -100,19 +100,19 @@ button:focus {
 .turn-indicator {
     display: flex;
     height: 6vh;
-    width: 15%;
     justify-content: center;
+    width: 15%;
 }
 
 .turn-indicator.X::before,
 .turn-indicator.X::after {
-    content: '';
-    position: absolute;
     align-self: center;
-    border-radius: calc(var(--marker-size) * 0.1);
-    height: calc(var(--marker-size) * 0.80);
-    width: calc(var(--marker-size) * 0.15);
     background-color: var(--game-info-text-color);
+    border-radius: calc(var(--marker-size) * 0.1);
+    content: '';
+    height: calc(var(--marker-size) * 0.80);
+    position: absolute;
+    width: calc(var(--marker-size) * 0.15);
 }
 
 .turn-indicator.X::before {
@@ -124,40 +124,40 @@ button:focus {
 }
 
 .turn-indicator.O::before {
-    content: '';
-    position: absolute;
     align-self: center;
+    background-color: none;
+    border-color: var(--game-info-text-color);
     border-radius: 50%;
     border-style: solid;
     border-width: calc(var(--marker-size)*0.15);
-    background-color: none;
+    content: '';
     height: calc(var(--marker-size) * 0.7);
+    position: absolute;
     width: calc(var(--marker-size) * 0.7);
-    border-color: var(--game-info-text-color);
 }
 
 .playable-section-indicator {
     display: flex;
-    justify-content: center;
     height: 7vh;
+    justify-content: center;
     width: 15%;
 }
 
 .playable-section-indicator p {
-    font-family: var(--default-font-family);
+    align-self: center;
     color: var(--game-info-text-color);
+    font-family: var(--default-font-family);
     font-size: 2.5vh;
     font-weight: bold;
     text-align: center;
-    align-self: center;
 }
 
 .conquest-mode-indicator:before {
-    font-family: var(--default-font-family);
     color: var(--game-info-text-color);
-    font-weight: bold;
     content: '\2694';
+    font-family: var(--default-font-family);
     font-size: 6vh;
+    font-weight: bold;
 }
 
 .conquest-mode-indicator {
@@ -169,28 +169,28 @@ button:focus {
 }
 
 .board-whole {
-    position: relative;
-    height: var(--board-size);
-    width: var(--board-size);
     align-content: center;
-    justify-content: center;
     align-items: center;
-    justify-items: center;
     display: grid;
     grid-template-columns: repeat(3, auto);
+    height: var(--board-size);
+    justify-content: center;
+    justify-items: center;
+    position: relative;
+    width: var(--board-size);
 }
 
 .board-segment {
-    border: solid 2px var(--large-gameboard-color);
     align-content: center;
-    justify-content: center;
     align-items: center;
-    justify-items: center;
-    display: grid;
-    position: relative;
-    grid-template-columns: repeat(3, auto);
+    border: solid 2px var(--large-gameboard-color);
     cursor: not-allowed;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+    justify-items: center;
     padding: 1vh;
+    position: relative;
 }
 
 .board-segment.X,
@@ -219,24 +219,24 @@ button:focus {
 }
 
 .board-segment.O-win:before {
-    content: '';
-    position: absolute;
+    background-color: none;
     border-radius: 50%;
     border: solid calc(var(--section-win-marker-size)*0.15) var(--section-win-marker-color);
-    background-color: none;
+    content: '';
     height: calc(var(--section-win-marker-size) * 0.85);
+    position: absolute;
     width: calc(var(--section-win-marker-size) * 0.85);
     z-index: -1;
 }
 
 .board-segment.X-win:before,
 .board-segment.X-win:after {
-    content: '';
-    position: absolute;
-    border-radius: calc(var(--section-win-marker-size) * 0.1);
-    height: var(--section-win-marker-size);
-    width: calc(var(--section-win-marker-size) * 0.15);
     background-color: var(--section-win-marker-color);
+    border-radius: calc(var(--section-win-marker-size) * 0.1);
+    content: '';
+    height: var(--section-win-marker-size);
+    position: absolute;
+    width: calc(var(--section-win-marker-size) * 0.15);
     z-index: -1;
 }
 
@@ -249,14 +249,14 @@ button:focus {
 }
 
 .cell {
-    height: var(--cell-size);
-    width: var(--cell-size);
-    border: solid 1px var(--small-gameboards-color);
-    display: flex;
-    position: relative;
-    justify-content: center;
     align-items: center;
+    border: solid 1px var(--small-gameboards-color);
     cursor: inherit;
+    display: flex;
+    height: var(--cell-size);
+    justify-content: center;
+    position: relative;
+    width: var(--cell-size);
 }
 
 .cell.X,
@@ -298,10 +298,10 @@ button:focus {
 .cell.X::after,
 .board-segment.X .cell:not(.X):not(.O):hover::before,
 .board-segment.X .cell:not(.X):not(.O):hover::after {
-    content: '';
-    position: absolute;
     border-radius: calc(var(--marker-size) * 0.1);
+    content: '';
     height: var(--marker-size);
+    position: absolute;
     width: calc(var(--marker-size) * 0.15);
 }
 
@@ -325,43 +325,44 @@ button:focus {
 
 .cell.O::before,
 .board-segment.O .cell:not(.X):not(.O):hover::before {
-    content: '';
-    position: absolute;
+    background-color: none;
     border-radius: 50%;
     border-style: solid;
     border-width: calc(var(--marker-size)*0.15);
-    background-color: none;
+    content: '';
     height: calc(var(--marker-size) * 0.85);
+    position: absolute;
     width: calc(var(--marker-size) * 0.85);
 }
 
 .winning-message {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.9);
+    bottom: 0;
     color: white;
-    font-size: 12vh;
+    display: none;
+    flex-direction: column;
     font-family: var(--default-font-family);
+    font-size: 12vh;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 .winning-message button {
-    height: 8vh;
-    width: calc(var(--board-size) * 0.6);
-    font-size: 5vh;
-    font-family: var(--default-font-family);
-    font-weight: bold;
     background-color: var(--button-color);
-    border: solid 1px var(--button-border-color);
     border-radius: 1vh;
+    border: solid 1px var(--button-border-color);
     color: var(--button-text-color);
     cursor: pointer;
+    font-family: var(--default-font-family);
+    font-size: 5vh;
+    font-weight: bold;
+    height: 8vh;
+    margin: 16px 0;
+    width: calc(var(--board-size) * 0.6);
 }
 
 .winning-message button:hover {
@@ -376,59 +377,59 @@ button:focus {
 /*MAIN MENU SCREEN*/
 
 .main-menu-container {
-    position: fixed;
-    display: flex;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    align-items: center;
     background: var(--base-background-color);
+    bottom: 0;
+    display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 .game-title-container {
+    align-content: center;
     display: flex;
     flex-direction: column;
-    top: 0;
     height: 40vh;
-    width: var(--board-size);
     justify-content: center;
-    align-content: center;
+    top: 0;
+    width: var(--board-size);
 }
 
 .game-title {
-    font-size: 12vh;
-    font-family: var(--default-font-family);
     color: var(--title-color);
-    width: 100%;
+    font-family: var(--default-font-family);
+    font-size: 12vh;
+    position: relative;
     text-align: center;
     text-transform: uppercase;
-    position: relative;
+    width: 100%;
 }
 
 .main-menu-button-container {
+    align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
     height: 60vh;
+    justify-content: space-evenly;
     width: var(--board-size);
 }
 
 .main-menu-button-container button,
 .new-game-modal button {
-    width: 100%;
-    height: 9vh;
-    font-size: 5vh;
-    font-family: var(--default-font-family);
-    font-weight: bold;
     background-color: var(--button-color);
-    border: solid 1px var(--button-border-color);
     border-radius: 1.5vh;
+    border: solid 1px var(--button-border-color);
     color: var(--button-text-color);
     cursor: pointer;
+    font-family: var(--default-font-family);
+    font-size: 5vh;
+    font-weight: bold;
+    height: 9vh;
+    width: 100%;
 }
 
 .main-menu-button-container button:hover,
@@ -445,33 +446,33 @@ button:focus {
 }
 
 .new-game-modal {
+    align-items: center;
     display: none;
     flex-direction: column;
-    position: fixed;
-    width: var(--board-size);
+    justify-content: center;
     left: 50%;
+    position: fixed;
     top: 50%;
     transform: translate(-50%, -50%);
-    justify-content: center;
-    align-items: center;
+    width: var(--board-size);
     z-index: 2;
 }
 
 .new-game-modal button {
-    width: 100%;
-    height: 10vh;
     font-size: 5vh;
+    height: 10vh;
     margin: 5vh 0;
+    width: 100%;
 }
 
 .new-game-modal-background {
-    display: none;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     background-color: rgba(0, 0, 0, 0.9);
+    bottom: 0;
+    display: none;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
     z-index: 1;
 }
 
@@ -487,29 +488,29 @@ button:focus {
 /* THEMES SCREEN */
 
 .themes-container {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    justify-content: space-evenly;
     align-items: center;
     background: var(--base-background-color);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 .themes-button-container {
+    -ms-overflow-style: none;
     display: grid;
     flex-grow: 90;
-    width: var(--board-size);
     grid-template-columns: repeat(2, auto);
     justify-content: space-evenly;
     margin: 1.5vh 0;
     overflow: scroll;
-    -ms-overflow-style: none;
-    /* Hides scroll bar in IE and Edge */
     scrollbar-width: none;
+    width: var(--board-size);
+    /* Hides scroll bar in IE and Edge */
     /* Hides scroll bar in Firefox */
 }
 
@@ -519,14 +520,14 @@ button:focus {
 }
 
 .themes-button-container button {
-    content: '';
-    width: calc(var(--section-win-marker-size) * 0.7);
-    height: calc(var(--section-win-marker-size) * 0.7);
-    margin: 1.5vh 0;
+    background-color: black;
     border-radius: 50%;
     border: solid 0.5vh #333333;
-    background-color: black;
+    content: '';
     cursor: pointer;
+    height: calc(var(--section-win-marker-size) * 0.7);
+    margin: 1.5vh 0;
+    width: calc(var(--section-win-marker-size) * 0.7);
 }
 
 #themeOneButton {
@@ -578,17 +579,17 @@ button:focus {
 }
 
 .back-button {
-    width: var(--board-size);
-    height: 9vh;
-    font-size: 5vh;
-    font-family: var(--default-font-family);
-    font-weight: bold;
     background-color: var(--button-color);
-    border: solid 1px var(--button-border-color);
     border-radius: 1.5vh;
+    border: solid 1px var(--button-border-color);
     color: var(--button-text-color);
-    margin: 24px 0;
     cursor: pointer;
+    font-family: var(--default-font-family);
+    font-size: 5vh;
+    font-weight: bold;
+    height: 9vh;
+    margin: 24px 0;
+    width: var(--board-size);
 }
 
 .back-button:hover {
@@ -599,22 +600,22 @@ button:focus {
 /*HOW TO PLAY SCREEN*/
 
 .how-to-play-container {
-    display: flex;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    flex-direction: column;
     align-items: center;
     background: var(--base-background-color);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 .how-to-play-game-indicators {
-    display: flex;
-    justify-content: space-evenly;
     align-items: center;
+    display: flex;
     height: 50vh;
+    justify-content: space-evenly;
     width: 50vh;
 }
 
@@ -624,26 +625,26 @@ button:focus {
 
 .how-to-play-turn-indicator {
     display: flex;
-    position: relative;
     height: 12vh;
-    width: 12vh;
     justify-content: center;
+    position: relative;
+    width: 12vh;
 }
 
 .how-to-play-turn-indicator.circled {
-    border: solid 3px red;
     border-radius: 50%;
+    border: solid 3px red;
 }
 
 .how-to-play-turn-indicator.X::before,
 .how-to-play-turn-indicator.X::after {
-    content: '';
-    position: absolute;
     align-self: center;
-    border-radius: calc(var(--marker-size) * 0.1);
-    height: calc(var(--marker-size) * 1);
-    width: calc(var(--marker-size) * 0.15);
     background-color: var(--game-info-text-color);
+    border-radius: calc(var(--marker-size) * 0.1);
+    content: '';
+    height: calc(var(--marker-size) * 1);
+    position: absolute;
+    width: calc(var(--marker-size) * 0.15);
 }
 
 .how-to-play-turn-indicator.X::before {
@@ -656,59 +657,59 @@ button:focus {
 
 .how-to-play-playable-section-indicator {
     display: flex;
-    position: relative;
-    justify-content: center;
     height: 12vh;
+    justify-content: center;
+    position: relative;
     width: 12vh;
 }
 
 .how-to-play-playable-section-indicator p {
-    font-family: var(--default-font-family);
+    align-self: center;
     color: var(--game-info-text-color);
+    font-family: var(--default-font-family);
     font-size: 2.5vh;
     font-weight: bold;
     text-align: center;
-    align-self: center;
 }
 
 .how-to-play-playable-section-indicator.circled {
-    border: solid 3px red;
     border-radius: 50%;
+    border: solid 3px red;
 }
 
 .how-to-play-conquest-mode-indicator {
     display: flex;
-    position: relative;
-    justify-content: center;
     height: 12vh;
+    justify-content: center;
+    position: relative;
     width: 12vh;
 }
 
 .how-to-play-conquest-mode-indicator p:before {
-    font-family: var(--default-font-family);
+    align-self: center;
     color: var(--game-info-text-color);
     content: '\2694';
+    font-family: var(--default-font-family);
     font-size: 6vh;
     font-weight: bold;
     text-align: center;
-    align-self: center;
 }
 
 .how-to-play-conquest-mode-indicator.circled {
-    border: solid 3px red;
     border-radius: 50%;
+    border: solid 3px red;
     bottom: 3px;
 }
 
 .how-to-play-board-whole {
-    display: grid;
-    height: 50vh;
-    width: 50vh;
     align-content: center;
-    justify-content: center;
     align-items: center;
-    justify-items: center;
+    display: grid;
     grid-template-columns: repeat(3, auto);
+    height: 50vh;
+    justify-content: center;
+    justify-items: center;
+    width: 50vh;
 }
 
 .how-to-play-board-whole.hide {
@@ -716,15 +717,15 @@ button:focus {
 }
 
 .how-to-play-board-segment {
-    border: solid 2px var(--large-gameboard-color);
     align-content: center;
-    justify-content: center;
     align-items: center;
-    justify-items: center;
+    border: solid 2px var(--large-gameboard-color);
     display: grid;
-    position: relative;
     grid-template-columns: repeat(3, auto);
+    justify-content: center;
+    justify-items: center;
     padding: 1vh;
+    position: relative;
 }
 
 .how-to-play-board-segment:first-child,
@@ -748,24 +749,24 @@ button:focus {
 }
 
 .how-to-play-board-segment.O-win:before {
-    content: '';
-    position: absolute;
+    background-color: none;
     border-radius: 50%;
     border: solid calc(50vh * 0.3 * 0.15) var(--section-win-marker-color);
-    background-color: none;
+    content: '';
     height: calc(50vh * 0.3 * 0.85);
+    position: absolute;
     width: calc(50vh * 0.3 * 0.85);
     z-index: -1;
 }
 
 .how-to-play-board-segment.X-win:before,
 .how-to-play-board-segment.X-win:after {
-    content: '';
-    position: absolute;
-    border-radius: calc(var(--section-win-marker-size) * 0.1);
-    height: calc(50vh * 0.3);
-    width: calc(50vh * 0.3 * 0.15);
     background-color: var(--section-win-marker-color);
+    border-radius: calc(var(--section-win-marker-size) * 0.1);
+    content: '';
+    height: calc(50vh * 0.3);
+    position: absolute;
+    width: calc(50vh * 0.3 * 0.15);
     z-index: -1;
 }
 
@@ -778,14 +779,14 @@ button:focus {
 }
 
 .how-to-play-cell {
-    height: calc(50vh * 0.09);
-    width: calc(50vh * 0.09);
-    border: solid 1px var(--small-gameboards-color);
-    display: flex;
-    position: relative;
-    justify-content: center;
     align-items: center;
+    border: solid 1px var(--small-gameboards-color);
     cursor: inherit;
+    display: flex;
+    height: calc(50vh * 0.09);
+    justify-content: center;
+    position: relative;
+    width: calc(50vh * 0.09);
 }
 
 .how-to-play-cell:first-child,
@@ -815,10 +816,10 @@ button:focus {
 
 .how-to-play-cell.X::before,
 .how-to-play-cell.X::after {
-    content: '';
-    position: absolute;
     border-radius: calc(var(--marker-size) * 0.1);
+    content: '';
     height: calc(50vh * 0.08);
+    position: absolute;
     width: calc(50vh * 0.01215);
 }
 
@@ -835,70 +836,70 @@ button:focus {
 }
 
 .how-to-play-cell.O::before {
-    content: '';
-    position: absolute;
+    background-color: none;
     border-radius: 50%;
     border-style: solid;
     border-width: calc(50vh * 0.01275);
-    background-color: none;
+    content: '';
     height: calc(50vh * 0.0765);
+    position: absolute;
     width: calc(50vh * 0.0765);
 }
 
 .how-to-play-text-container {
-    display: flex;
-    width: 95%;
-    max-width: 70vh;
-    height: 30vh;
-    text-align: center;
     align-items: center;
-    justify-content: center;
+    display: flex;
     font-family: var(--default-font-family);
     font-size: 3vh;
+    height: 30vh;
+    justify-content: center;
+    max-width: 70vh;
+    text-align: center;
+    width: 95%;
 }
 
 .how-to-play-text-container p {
-    margin: 0;
     color: var(--marker-color);
+    margin: 0;
 }
 
 .how-to-play-arrows-container {
-    display: flex;
-    width: 95%;
-    max-width: 70vh;
-    height: 10vh;
     align-items: center;
+    display: flex;
+    height: 10vh;
+    max-width: 70vh;
+    width: 95%;
 }
 
 .how-to-play-arrows-container button {
-    border: none;
-    height: 7vh;
-    width: 15vw;
-    min-width: 80px;
-    margin: 0 auto;
     background: none;
+    border: none;
     cursor: pointer;
+    height: 7vh;
+    margin: 0 auto;
+    min-width: 80px;
+    width: 15vw;
 }
 
 .how-to-play-arrow {
-    border: solid var(--marker-color);
-    border-width: 0 2px 2px 0;
-    display: inline-block;
-    padding: 2vh;
-    height: 2vh;
-    width: 2vh;
     background: none;
+    border-width: 0 2px 2px 0;
+    border: solid var(--marker-color);
+    display: inline-block;
+    height: 2vh;
     justify-content: center;
+    padding: 2vh;
+    width: 2vh;
 }
 
 .how-to-play-arrow.right {
-    transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }
 
 .how-to-play-arrow.left {
-    transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
 }
 
 .hide {
@@ -906,6 +907,33 @@ button:focus {
 }
 
 @media only screen and (max-aspect-ratio: 8/10) {
+    O-win:before {
+        border: solid calc(75vw * 0.3 * 0.15) var(--section-win-marker-color);
+        height: calc(75vw * 0.3 * 0.85);
+        width: calc(75vw * 0.3 * 0.85);
+    }
+    O::before {
+        border-width: calc(var(--marker-size)*0.2);
+        height: calc(var(--marker-size) * 0.95);
+        width: calc(var(--marker-size) * 0.95);
+    }
+    O::before {
+        border-width: calc(75vw * 0.01275);
+        height: calc(75vw * 0.0765);
+        width: calc(75vw * 0.0765);
+    }
+    X-win:after {
+        height: calc(75vw * 0.3);
+        width: calc(75vw * 0.3 * 0.15);
+    }
+    X::after {
+        height: calc(var(--marker-size) * 1);
+        width: calc(var(--marker-size) * 0.2);
+    }
+    X::after {
+        height: calc(75vw * 0.08);
+        width: calc(75vw * 0.01215);
+    }
      :root {
         --board-size: 100vw;
         --cell-size: 9.5vw;
@@ -918,15 +946,15 @@ button:focus {
         width: 40vw;
     }
     #saveButton {
+        left: 25%;
         position: absolute;
         top: 25%;
-        left: 25%;
         transform: translate(-50%, -50%);
     }
     #mainMenuButton {
         position: absolute;
-        top: 25%;
         right: 25%;
+        top: 25%;
         transform: translate(50%, -50%);
     }
     .board-whole {
@@ -936,25 +964,16 @@ button:focus {
         padding: 1.5vw;
     }
     .turn-indicator {
-        position: absolute;
         bottom: 25%;
         left: 25%;
-        width: 6vh;
+        position: absolute;
         transform: translate(-50%, 50%);
+        width: 6vh;
     }
     .turn-indicator.X::before,
-    .turn-indicator.X::after {
-        height: calc(var(--marker-size) * 1);
-        width: calc(var(--marker-size) * 0.2);
-    }
-    .turn-indicator.O::before {
-        border-width: calc(var(--marker-size)*0.2);
-        height: calc(var(--marker-size) * 0.95);
-        width: calc(var(--marker-size) * 0.95);
-    }
-    .playable-section-indicator {
-        position: absolute;
+    .turn-indicator. .turn-indicator. .playable-section-indicator {
         bottom: 25%;
+        position: absolute;
         right: 25%;
         transform: translate(50%, 50%);
     }
@@ -965,8 +984,8 @@ button:focus {
         font-size: 13vw;
     }
     .winning-message button {
-        height: 10vw;
         font-size: 7vw;
+        height: 10vw;
     }
     /*MAIN MENU SCREEN*/
     .game-title {
@@ -984,9 +1003,9 @@ button:focus {
     }
     /*THEMES SCREEN*/
     .back-button {
-        width: calc(var(--board-size)*0.9);
-        height: 12vw;
         font-size: 8vw;
+        height: 12vw;
+        width: calc(var(--board-size)*0.9);
     }
     .themes-button-container button {
         border: solid 1vw #333333;
@@ -994,39 +1013,21 @@ button:focus {
     /*HOW TO PLAY SCREEN*/
     .how-to-play-game-indicators,
     .how-to-play-board-whole {
+        flex-grow: 50;
         height: 100vw;
         max-height: 50vh;
-        width: 100vw;
         max-width: 50vh;
-        flex-grow: 50;
+        width: 100vw;
     }
-    .how-to-play-board-segment.O-win:before {
-        border: solid calc(75vw * 0.3 * 0.15) var(--section-win-marker-color);
-        height: calc(75vw * 0.3 * 0.85);
-        width: calc(75vw * 0.3 * 0.85);
-    }
-    .how-to-play-board-segment.X-win:before,
-    .how-to-play-board-segment.X-win:after {
-        height: calc(75vw * 0.3);
-        width: calc(75vw * 0.3 * 0.15);
-    }
-    .how-to-play-cell {
+    .how-to-play-board-segment. .how-to-play-board-segment.X-win:before,
+    .how-to-play-board-segment. .how-to-play-cell {
         height: calc(100vw * 0.09);
         max-height: calc(50vh * 0.09);
-        width: calc(100vw * 0.09);
         max-width: calc(50vh * 0.09);
+        width: calc(100vw * 0.09);
     }
     .how-to-play-cell.X::before,
-    .how-to-play-cell.X::after {
-        height: calc(75vw * 0.08);
-        width: calc(75vw * 0.01215);
-    }
-    .how-to-play-cell.O::before {
-        border-width: calc(75vw * 0.01275);
-        height: calc(75vw * 0.0765);
-        width: calc(75vw * 0.0765);
-    }
-    .how-to-play-board-segment {
+    .how-to-play-cell. .how-to-play-cell. .how-to-play-board-segment {
         padding: 1vw;
     }
     .how-to-play-text-container {
@@ -1041,6 +1042,33 @@ button:focus {
 }
 
 @media only screen and (max-aspect-ratio: 6/10) {
+    O-win:before {
+        border: solid calc(90vw * 0.3 * 0.15) var(--section-win-marker-color);
+        height: calc(90vw * 0.3 * 0.85);
+        width: calc(90vw * 0.3 * 0.85);
+    }
+    O::before {
+        border-width: calc(var(--marker-size)*0.25);
+        height: calc(var(--marker-size) * 1.2);
+        width: calc(var(--marker-size) * 1.2);
+    }
+    O::before {
+        border-width: calc(90vw * 0.01275);
+        height: calc(90vw * 0.0765);
+        width: calc(90vw * 0.0765);
+    }
+    X-win:after {
+        height: calc(90vw * 0.3);
+        width: calc(90vw * 0.3 * 0.15);
+    }
+    X::after {
+        height: calc(var(--marker-size) * 1.5);
+        width: calc(var(--marker-size) * 0.25);
+    }
+    X::after {
+        height: calc(90vw * 0.08);
+        width: calc(90vw * 0.01215);
+    }
     /*GAMEBOARD SCREEN*/
     .in-game-info-container {
         height: 33vh;
@@ -1050,68 +1078,42 @@ button:focus {
         height: 67vh;
     }
     .in-game-info-container button {
-        width: 40vw;
         font-size: 5vw;
+        width: 40vw;
     }
     #saveButton {
+        left: 25%;
         position: absolute;
         top: 25%;
-        left: 25%;
         transform: translate(-50%, -50%);
     }
     #mainMenuButton {
         position: absolute;
-        top: 25%;
         right: 25%;
+        top: 25%;
         transform: translate(50%, -50%);
     }
     .turn-indicator {
-        position: absolute;
         bottom: 25%;
         left: 25%;
+        position: absolute;
         transform: translate(-50%, 50%);
     }
     .playable-section-indicator {
-        position: absolute;
         bottom: 25%;
+        position: absolute;
         right: 25%;
         transform: translate(50%, 50%);
     }
     .turn-indicator.X::before,
-    .turn-indicator.X::after {
-        height: calc(var(--marker-size) * 1.5);
-        width: calc(var(--marker-size) * 0.25);
-    }
-    .turn-indicator.O::before {
-        border-width: calc(var(--marker-size)*0.25);
-        height: calc(var(--marker-size) * 1.2);
-        width: calc(var(--marker-size) * 1.2);
-    }
-    .playable-section-indicator p {
+    .turn-indicator. .turn-indicator. .playable-section-indicator p {
         font-size: 7vw;
     }
     /*HOW TO PLAY SCREEN*/
     .how-to-play-text-container {
         font-size: 4.5vw;
     }
-    .how-to-play-board-segment.O-win:before {
-        border: solid calc(90vw * 0.3 * 0.15) var(--section-win-marker-color);
-        height: calc(90vw * 0.3 * 0.85);
-        width: calc(90vw * 0.3 * 0.85);
-    }
-    .how-to-play-board-segment.X-win:before,
-    .how-to-play-board-segment.X-win:after {
-        height: calc(90vw * 0.3);
-        width: calc(90vw * 0.3 * 0.15);
-    }
-    .how-to-play-cell.X::before,
-    .how-to-play-cell.X::after {
-        height: calc(90vw * 0.08);
-        width: calc(90vw * 0.01215);
-    }
-    .how-to-play-cell.O::before {
-        border-width: calc(90vw * 0.01275);
-        height: calc(90vw * 0.0765);
-        width: calc(90vw * 0.0765);
-    }
+    .how-to-play-board-segment. .how-to-play-board-segment.X-win:before,
+    .how-to-play-board-segment. .how-to-play-cell.X::before,
+    .how-to-play-cell. .how-to-play-cell.
 }
