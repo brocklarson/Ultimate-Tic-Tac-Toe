@@ -1,3 +1,83 @@
+//SAVE GAME MODULE
+const saveGameModule = (() => {
+
+    function saveGame() {
+        const cellElements = document.querySelectorAll('.cell');
+        const boardSection = document.querySelectorAll('.board-segment');
+        const saveGameVar = gameboardModule.getSaveVar();
+        document.body.classList.add('waiting');
+
+
+        localStorage.setItem('savedGameExist', true);
+        localStorage.setItem('savedGameConquestMode', saveGameVar.conquestMode);
+
+        let cellsClassList = [];
+        for (i = 0; i < 81; i++) {
+            cellsClassList[i] = cellElements[i].classList;
+        }
+        localStorage.setItem('cellsClassList', JSON.stringify(cellsClassList));
+
+        let boardSectionsClassList = [];
+        for (i = 0; i < 9; i++) {
+            boardSectionsClassList[i] = boardSection[i].classList;
+        }
+        localStorage.setItem('boardSectionsClassList', JSON.stringify(boardSectionsClassList));
+        localStorage.setItem('xTurn', saveGameVar.xTurn);
+        localStorage.setItem('playableSection', saveGameVar.playedCellIndex);
+
+        saveButton.innerHTML = 'Saving...';
+        setTimeout(function() {
+            saveButton.innerHTML = "Save Game";
+            document.body.classList.remove('waiting');
+        }, 500);
+    }
+
+    function loadGame() {
+        //Get this area working
+        const cellElements = document.querySelectorAll('.cell');
+        const boardSection = document.querySelectorAll('.board-segment');
+
+        //add X/O and X_WIN/O_WIN class to cellElements and boardSections, repectively
+        for (i = 0; i < 81; i++) {
+            cellElements[i].classList.add(Object.values(JSON.parse(localStorage.cellsClassList)[i])[1])
+        }
+        for (i = 0; i < 9; i++) {
+            boardSection[i].classList.add(Object.values(JSON.parse(localStorage.boardSectionsClassList)[i])[1])
+        }
+
+        boardSection.forEach(section => {
+            section.classList.remove('undefined');
+        })
+
+        turnIndicator.classList.remove(X_CLASS, O_CLASS);
+        xTurn = (localStorage.xTurn === 'true');
+        if (xTurn) turnIndicator.classList.add(X_CLASS);
+        if (!xTurn) turnIndicator.classList.add(O_CLASS);
+
+        playedCellIndex = parseInt(localStorage.playableSection);
+        if (isSectionFull(playedCellIndex)) {
+            setBoardHoverClass(playedCellIndex, true);
+            setPlayableSectionIndicatorText(playedCellIndex, true);
+        } else {
+            setBoardHoverClass(playedCellIndex, false);
+            setPlayableSectionIndicatorText(playedCellIndex, false);
+        }
+
+        if (localStorage.savedGameConquestMode === 'true') {
+            conquestMode = true;
+            conquestModeIndicator.classList.add('show');
+        } else {
+            conquestMode = false;
+            conquestModeIndicator.classList.remove('show');
+        }
+
+        winningMessage.classList.remove('show');
+    }
+
+    return { saveGame, loadGame }
+
+})();
+
 //GAME OVER MODULE
 const gameOverModule = (() => {
     //Cache DOM
@@ -33,8 +113,9 @@ const gameIndicatorsModule = (() => {
 
 
     //Bind Events
-    // saveButton.addEventListener('click', saveGame);
+    saveButton.addEventListener('click', saveGameModule.saveGame);
     events.subscribe('playableSection', setPlayableSectionIndicatorText);
+
 
     (function setConquestMode() {
         if (conquestMode) document.getElementById('conquestModeIndicator').classList.add('show');
@@ -115,6 +196,15 @@ const gameboardModule = (() => {
     let playedCellIndex;
     let indexOfPlayedSection;
 
+    function getSaveVar() {
+        return {
+            xTurn,
+            playedCellIndex,
+            indexOfPlayedSection,
+            conquestMode: gameIndicatorsModule.getConquestMode()
+        };
+    }
+
 
     (function createBoard() {
         const gameBoard = document.getElementById('boardWhole');
@@ -136,10 +226,15 @@ const gameboardModule = (() => {
 
 
     function initializeGame() {
-        // if (savedGameExist) {
-        //     loadGame();
-        //     return;
-        // }
+        if (savedGameExist) { //Does this run when pressing restart game?
+            saveGameModule.loadGame();
+            cellElements.forEach(cell => {
+                cell.classList.remove('undefined');
+                cell.removeEventListener('click', handleClick);
+                cell.addEventListener('click', handleClick);
+            })
+            return;
+        }
 
         xTurn = true;
         setBoard();
@@ -203,7 +298,7 @@ const gameboardModule = (() => {
     function setBoardHoverClass(playedCellIndex, sentToFullSection) {
         boardSection.forEach(section => section.classList.remove(X_CLASS, O_CLASS));
 
-        //If isSectionFull() === true, sets class of each section to 'X' or 'O' to allow any section to be played on/hovered over
+        //If section is full, sets class of each section to 'X' or 'O' to allow any section to be played on/hovered over
         if (sentToFullSection) {
             if (xTurn) boardSection.forEach(section => section.classList.add(X_CLASS));
             if (!xTurn) boardSection.forEach(section => section.classList.add(O_CLASS));
@@ -259,83 +354,6 @@ const gameboardModule = (() => {
         })
     }
 
+    return { getSaveVar }
+
 })();
-
-
-
-//SAVE GAME MODULE
-const saveGameModule = (() => {
-    function saveGame() {
-        document.body.classList.add('waiting');
-
-        localStorage.setItem('savedGameExist', true);
-        localStorage.setItem('savedGameConquestMode', conquestMode);
-
-        let cellsClassList = [];
-        for (i = 0; i < 81; i++) {
-            cellsClassList[i] = cellElements[i].classList;
-        }
-        localStorage.setItem('cellsClassList', JSON.stringify(cellsClassList));
-
-        let boardSectionsClassList = [];
-        for (i = 0; i < 9; i++) {
-            boardSectionsClassList[i] = boardSection[i].classList;
-        }
-        localStorage.setItem('boardSectionsClassList', JSON.stringify(boardSectionsClassList));
-        localStorage.setItem('xTurn', xTurn);
-        localStorage.setItem('playableSection', playedCellIndex);
-
-        saveButton.innerHTML = 'Saving...';
-        setTimeout(function() {
-            saveButton.innerHTML = "Save Game";
-            document.body.classList.remove('waiting');
-        }, 500);
-    }
-
-    function loadGame() {
-        //for loops add X/O and X_WIN/O_WIN class to cells Elements and board sections, repectively
-        for (i = 0; i < 81; i++) {
-            cellElements[i].classList.add(Object.values(JSON.parse(localStorage.cellsClassList)[i])[1])
-        }
-        for (i = 0; i < 9; i++) {
-            boardSection[i].classList.add(Object.values(JSON.parse(localStorage.boardSectionsClassList)[i])[1])
-        }
-
-        cellElements.forEach(cell => {
-            cell.classList.remove('undefined');
-            cell.removeEventListener('click', handleClick);
-            cell.addEventListener('click', handleClick);
-        })
-
-        boardSection.forEach(section => {
-            section.classList.remove('undefined');
-        })
-
-        turnIndicator.classList.remove(X_CLASS, O_CLASS);
-        xTurn = (localStorage.xTurn === 'true');
-        if (xTurn) turnIndicator.classList.add(X_CLASS);
-        if (!xTurn) turnIndicator.classList.add(O_CLASS);
-
-        playedCellIndex = parseInt(localStorage.playableSection);
-        if (isSectionFull(playedCellIndex)) {
-            setBoardHoverClass(playedCellIndex, true);
-            setPlayableSectionIndicatorText(playedCellIndex, true);
-        } else {
-            setBoardHoverClass(playedCellIndex, false);
-            setPlayableSectionIndicatorText(playedCellIndex, false);
-        }
-
-        if (localStorage.savedGameConquestMode === 'true') {
-            conquestMode = true;
-            conquestModeIndicator.classList.add('show');
-        } else {
-            conquestMode = false;
-            conquestModeIndicator.classList.remove('show');
-        }
-
-        winningMessage.classList.remove('show');
-    }
-
-    return { saveGame, loadGame }
-
-})
