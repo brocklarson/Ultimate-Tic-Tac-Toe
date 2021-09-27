@@ -1,6 +1,6 @@
 //SAVE GAME MODULE
 const saveGameModule = (() => {
-
+    //utilize save.js now
     function saveGame() {
         const cellElements = document.querySelectorAll('.cell');
         const boardSection = document.querySelectorAll('.board-segment');
@@ -9,69 +9,37 @@ const saveGameModule = (() => {
 
 
         localStorage.setItem('savedGameExist', true);
-        localStorage.setItem('savedGameConquestMode', saveGameVar.conquestMode);
+        localStorage.setItem('conquestMode', saveGameVar.conquestMode);
 
         let cellsClassList = [];
         for (i = 0; i < 81; i++) {
             cellsClassList[i] = cellElements[i].classList;
         }
-        localStorage.setItem('cellsClassList', JSON.stringify(cellsClassList));
-
         let boardSectionsClassList = [];
         for (i = 0; i < 9; i++) {
             boardSectionsClassList[i] = boardSection[i].classList;
         }
+
+        localStorage.setItem('cellsClassList', JSON.stringify(cellsClassList));
         localStorage.setItem('boardSectionsClassList', JSON.stringify(boardSectionsClassList));
         localStorage.setItem('xTurn', saveGameVar.xTurn);
         localStorage.setItem('playableSection', saveGameVar.playedCellIndex);
 
-        saveButton.innerHTML = 'Saving...';
+        saveButton.innerText = 'Saving...';
         setTimeout(function() {
-            saveButton.innerHTML = "Save Game";
+            saveButton.innerText = "Save Game";
             document.body.classList.remove('waiting');
         }, 500);
     }
 
     function loadGame() {
-        //Get this area working
-        const cellElements = document.querySelectorAll('.cell');
-        const boardSection = document.querySelectorAll('.board-segment');
-
-        //add X/O and X_WIN/O_WIN class to cellElements and boardSections, repectively
-        for (i = 0; i < 81; i++) {
-            cellElements[i].classList.add(Object.values(JSON.parse(localStorage.cellsClassList)[i])[1])
+        return {
+            boardSectionsClassList: JSON.parse(localStorage.boardSectionsClassList),
+            cellsClassList: JSON.parse(localStorage.cellsClassList),
+            xTurn: (localStorage.xTurn === 'true'),
+            playedCellIndex: parseInt(localStorage.playableSection),
+            conquestMode: (localStorage.conquestMode === 'true')
         }
-        for (i = 0; i < 9; i++) {
-            boardSection[i].classList.add(Object.values(JSON.parse(localStorage.boardSectionsClassList)[i])[1])
-        }
-
-        boardSection.forEach(section => {
-            section.classList.remove('undefined');
-        })
-
-        turnIndicator.classList.remove(X_CLASS, O_CLASS);
-        xTurn = (localStorage.xTurn === 'true');
-        if (xTurn) turnIndicator.classList.add(X_CLASS);
-        if (!xTurn) turnIndicator.classList.add(O_CLASS);
-
-        playedCellIndex = parseInt(localStorage.playableSection);
-        if (isSectionFull(playedCellIndex)) {
-            setBoardHoverClass(playedCellIndex, true);
-            setPlayableSectionIndicatorText(playedCellIndex, true);
-        } else {
-            setBoardHoverClass(playedCellIndex, false);
-            setPlayableSectionIndicatorText(playedCellIndex, false);
-        }
-
-        if (localStorage.savedGameConquestMode === 'true') {
-            conquestMode = true;
-            conquestModeIndicator.classList.add('show');
-        } else {
-            conquestMode = false;
-            conquestModeIndicator.classList.remove('show');
-        }
-
-        winningMessage.classList.remove('show');
     }
 
     return { saveGame, loadGame }
@@ -90,8 +58,8 @@ const gameOverModule = (() => {
     function endGame(data) {
         const draw = data[0];
         const currentClass = data[1];
-        if (draw) winningMessageTextElement.innerHTML = 'Draw';
-        if (!draw) winningMessageTextElement.innerHTML = currentClass + "'s Win!";
+        if (draw) winningMessageTextElement.innerText = 'Draw';
+        if (!draw) winningMessageTextElement.innerText = currentClass + "'s Win!";
         winningMessage.classList.add('show');
         restartButton.addEventListener('click', restartGame);
     }
@@ -130,42 +98,20 @@ const gameIndicatorsModule = (() => {
         const sentToFullSection = data[1];
 
         if (sentToFullSection) {
-            playableSectionIndicatorText.innerHTML = 'Play<br>Anywhere';
+            playableSectionIndicatorText.innerText = 'Play\nAnywhere';
             return;
         }
 
-        switch (playedCellIndex) {
-            case 0:
-                playableSectionIndicatorText.innerHTML = 'Top<br>Left';
-                break;
-            case 1:
-                playableSectionIndicatorText.innerHTML = 'Top<br>Middle';
-                break;
-            case 2:
-                playableSectionIndicatorText.innerHTML = 'Top<br>Right';
-                break;
-            case 3:
-                playableSectionIndicatorText.innerHTML = 'Middle<br>Left';
-                break;
-            case 4:
-                playableSectionIndicatorText.innerHTML = 'Center';
-                break;
-            case 5:
-                playableSectionIndicatorText.innerHTML = 'Middle<br>Right';
-                break;
-            case 6:
-                playableSectionIndicatorText.innerHTML = 'Bottom<br>Left';
-                break;
-            case 7:
-                playableSectionIndicatorText.innerHTML = 'Bottom<br>Middle';
-                break;
-            case 8:
-                playableSectionIndicatorText.innerHTML = 'Bottom<br>Right';
-                break;
-            default:
-                playableSectionIndicatorText.innerHTML = 'Play<br>Anywhere';
-                break;
-        }
+        if (playedCellIndex === 0) playableSectionIndicatorText.innerText = 'Top\nLeft';
+        else if (playedCellIndex === 1) playableSectionIndicatorText.innerText = 'Top\nMiddle';
+        else if (playedCellIndex === 2) playableSectionIndicatorText.innerText = 'Top\nRight';
+        else if (playedCellIndex === 3) playableSectionIndicatorText.innerText = 'Middle\nLeft';
+        else if (playedCellIndex === 4) playableSectionIndicatorText.innerText = 'Center';
+        else if (playedCellIndex === 5) playableSectionIndicatorText.innerText = 'Middle\nRight';
+        else if (playedCellIndex === 6) playableSectionIndicatorText.innerText = 'Bottom\nLeft';
+        else if (playedCellIndex === 7) playableSectionIndicatorText.innerText = 'Bottom\nMiddle';
+        else if (playedCellIndex === 8) playableSectionIndicatorText.innerText = 'Bottom\nRight';
+        else playableSectionIndicatorText.innerText = 'Play\nAnywhere';
     }
 
     return { getConquestMode }
@@ -175,10 +121,6 @@ const gameIndicatorsModule = (() => {
 //GAMEPLAY MODULE
 const gameboardModule = (() => {
     //Variables
-    const X_CLASS = 'X'; //For individual cells
-    const O_CLASS = 'O'; //For individual cells
-    const X_WIN_CLASS = 'X-win'; //For board section 
-    const O_WIN_CLASS = 'O-win'; //For board section
     const WINNING_COMBINATIONS = [
         [0, 1, 2],
         [3, 4, 5],
@@ -197,10 +139,9 @@ const gameboardModule = (() => {
     let indexOfPlayedSection;
 
     function getSaveVar() {
-        return {
+        return { //maybe add cell and borad class lists here?
             xTurn,
             playedCellIndex,
-            indexOfPlayedSection,
             conquestMode: gameIndicatorsModule.getConquestMode()
         };
     }
@@ -226,41 +167,76 @@ const gameboardModule = (() => {
 
 
     function initializeGame() {
-        if (savedGameExist) { //Does this run when pressing restart game?
-            saveGameModule.loadGame();
+        if (savedGameExist) { //Check is this runs when pressing restart game after a saved game too?
+            const loadedGame = saveGameModule.loadGame();
+            setBoard(loadedGame);
+        } else setBoard(null);
+    }
+    initializeGame();
+
+    function setBoard(loadedGame) {
+        let sentToFullSection = false;
+        if (loadedGame === null) {
+            boardSection.forEach(section => {
+                section.classList.remove('X', 'O', 'X-win', 'O-win');
+                section.classList.add('X');
+            })
+            cellElements.forEach(cell => {
+                cell.classList.remove('X', 'O');
+                cell.removeEventListener('click', handleClick);
+                cell.addEventListener('click', handleClick);
+            })
+
+            turnIndicator.classList.remove('X', 'O');
+            turnIndicator.classList.add('X');
+            xTurn = true;
+        } else {
+            xTurn = loadedGame.xTurn;
+            playedCellIndex = loadedGame.playedCellIndex;
+            conquestMode = loadedGame.conquestMode;
+            cellsClassList = loadedGame.cellsClassList;
+            boardSectionsClassList = loadedGame.boardSectionsClassList;
+
+            for (i = 0; i < 81; i++) {
+                cellElements[i].classList.add(Object.values(cellsClassList[i])[1]); //better way to do this? What if class isn't always in [1] position?
+            }
+            for (i = 0; i < 9; i++) {
+                boardSection[i].classList.add(Object.values(boardSectionsClassList[i])[1]); //same as above
+            }
+
+            boardSection.forEach(section => {
+                section.classList.remove('undefined');
+            })
+
             cellElements.forEach(cell => {
                 cell.classList.remove('undefined');
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
             })
-            return;
+
+            turnIndicator.classList.remove('X', 'O');
+            if (xTurn) turnIndicator.classList.add('X');
+            if (!xTurn) turnIndicator.classList.add('O');
+
+            if (isSectionFull(playedCellIndex)) {
+                setBoardHoverClass(playedCellIndex, true);
+                sentToFullSection = true;
+            } else {
+                setBoardHoverClass(playedCellIndex, false);
+                sentToFullSection = false;
+            }
+
+            if (conquestMode) conquestModeIndicator.classList.add('show');
+            else conquestModeIndicator.classList.remove('show');
         }
 
-        xTurn = true;
-        setBoard();
-        events.publish('playableSection', [null, true]);
-    }
-    initializeGame();
-
-    function setBoard() {
-        boardSection.forEach(section => {
-            section.classList.remove(X_CLASS, O_CLASS, X_WIN_CLASS, O_WIN_CLASS);
-            section.classList.add(X_CLASS);
-        })
-        cellElements.forEach(cell => {
-            cell.classList.remove(X_CLASS, O_CLASS);
-            cell.removeEventListener('click', handleClick);
-            cell.addEventListener('click', handleClick);
-        })
-
-        turnIndicator.classList.remove(X_CLASS, O_CLASS);
-        turnIndicator.classList.add(X_CLASS);
+        events.publish('playableSection', [playedCellIndex, sentToFullSection]);
     }
 
     function handleClick(e) {
         const cell = e.target;
-        const currentClass = xTurn ? X_CLASS : O_CLASS;
-        const currentWinCheckClass = xTurn ? X_WIN_CLASS : O_WIN_CLASS;
+        const currentClass = xTurn ? 'X' : 'O';
+        const currentWinCheckClass = xTurn ? 'X-win' : 'O-win';
         playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
         indexOfPlayedSection = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
 
@@ -282,7 +258,7 @@ const gameboardModule = (() => {
     }
 
     function placeCellMarker(cell, currentClass, indexOfPlayedSection) {
-        if (cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS)) return false;
+        if (cell.classList.contains('X') || cell.classList.contains('O')) return false;
         if (boardSection[indexOfPlayedSection].classList.contains(currentClass) === false) return false;
 
         cell.classList.add(currentClass);
@@ -291,22 +267,22 @@ const gameboardModule = (() => {
 
     function switchTurn() {
         xTurn = !xTurn;
-        if (xTurn) turnIndicator.classList.replace(O_CLASS, X_CLASS);
-        if (!xTurn) turnIndicator.classList.replace(X_CLASS, O_CLASS);
+        if (xTurn) turnIndicator.classList.replace('O', 'X');
+        if (!xTurn) turnIndicator.classList.replace('X', 'O');
     }
 
     function setBoardHoverClass(playedCellIndex, sentToFullSection) {
-        boardSection.forEach(section => section.classList.remove(X_CLASS, O_CLASS));
+        boardSection.forEach(section => section.classList.remove('X', 'O'));
 
         //If section is full, sets class of each section to 'X' or 'O' to allow any section to be played on/hovered over
         if (sentToFullSection) {
-            if (xTurn) boardSection.forEach(section => section.classList.add(X_CLASS));
-            if (!xTurn) boardSection.forEach(section => section.classList.add(O_CLASS));
+            if (xTurn) boardSection.forEach(section => section.classList.add('X'));
+            if (!xTurn) boardSection.forEach(section => section.classList.add('O'));
             return;
         }
 
-        if (xTurn) boardSection[playedCellIndex].classList.add(X_CLASS);
-        if (!xTurn) boardSection[playedCellIndex].classList.add(O_CLASS);
+        if (xTurn) boardSection[playedCellIndex].classList.add('X');
+        if (!xTurn) boardSection[playedCellIndex].classList.add('O');
     }
 
     function isSectionFull(playedCellIndex) {
@@ -314,20 +290,20 @@ const gameboardModule = (() => {
             return true;
         }
         return Array.from(boardSection[playedCellIndex].children).every(child =>
-            child.classList.contains(X_CLASS) || child.classList.contains(O_CLASS)
+            child.classList.contains('X') || child.classList.contains('O')
         );
     }
 
     function placeSectionWinMarker(cell) {
-        cell.parentNode.classList.remove(X_WIN_CLASS, O_WIN_CLASS);
+        cell.parentNode.classList.remove('X-win', 'O-win');
 
-        if (xTurn) cell.parentNode.classList.add(X_WIN_CLASS);
-        if (!xTurn) cell.parentNode.classList.add(O_WIN_CLASS);
+        if (xTurn) cell.parentNode.classList.add('X-win');
+        if (!xTurn) cell.parentNode.classList.add('O-win');
     }
 
     function checkSectionWin(cell, currentClass, playedCellIndex) {
         if (!gameIndicatorsModule.getConquestMode()) {
-            if (cell.parentNode.classList.contains(X_WIN_CLASS) || cell.parentNode.classList.contains(O_WIN_CLASS)) {
+            if (cell.parentNode.classList.contains('X-win') || cell.parentNode.classList.contains('O-win')) {
                 return false;
             }
         }
@@ -350,7 +326,7 @@ const gameboardModule = (() => {
 
     function checkDraw() {
         return [...cellElements].every(cell => {
-            return cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS);
+            return cell.classList.contains('X') || cell.classList.contains('O');
         })
     }
 
