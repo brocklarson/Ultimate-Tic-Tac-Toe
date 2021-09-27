@@ -10,7 +10,9 @@ const themes = (() => {
         const btnIndex = getButton(event);
         const theme = themeValues(btnIndex);
         events.publish('themeChange', theme);
-        events.publish('variableChange', [theme, 'appTheme']);
+        events.publish('variableChange', [
+            [theme, 'appTheme']
+        ]);
     }
 
     function getButton(event) {

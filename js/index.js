@@ -13,8 +13,12 @@ const mainMenu = (() => {
     if (storage.getLocalStorage('savedGameExist')) continueGameButton.classList.add('show');
 
     function startNewGame(conquestMode = false) {
-        events.publish('variableChange', [conquestMode, 'conquestMode']);
-        events.publish('variableChange', [false, 'savedGameExist']);
+        events.publish('variableChange', [
+            [conquestMode, 'conquestMode']
+        ]);
+        events.publish('variableChange', [
+            [false, 'savedGameExist']
+        ]);
         window.location.href = 'html/gameboard.html';
     }
 

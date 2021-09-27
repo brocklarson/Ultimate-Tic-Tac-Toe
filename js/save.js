@@ -4,8 +4,11 @@ const storage = (() => {
     events.subscribe('variableChange', updateLocalStorage);
 
     function updateLocalStorage(dataset) {
+        console.table(dataset);
         if (storageAvailable('localStorage')) {
-            localStorage.setItem(dataset[1], JSON.stringify(dataset[0]));
+            dataset.forEach((item) => {
+                localStorage.setItem(item[1], JSON.stringify(item[0]));
+            });
         }
     }
 

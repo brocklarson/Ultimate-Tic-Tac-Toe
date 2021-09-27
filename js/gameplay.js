@@ -1,15 +1,10 @@
 //SAVE GAME MODULE
 const saveGameModule = (() => {
-    //utilize save.js now
     function saveGame() {
         const cellElements = document.querySelectorAll('.cell');
         const boardSection = document.querySelectorAll('.board-segment');
         const saveGameVar = gameboardModule.getSaveVar();
         document.body.classList.add('waiting');
-
-
-        localStorage.setItem('savedGameExist', true);
-        localStorage.setItem('conquestMode', saveGameVar.conquestMode);
 
         let cellsClassList = [];
         for (i = 0; i < 81; i++) {
@@ -20,10 +15,14 @@ const saveGameModule = (() => {
             boardSectionsClassList[i] = boardSection[i].classList;
         }
 
-        localStorage.setItem('cellsClassList', JSON.stringify(cellsClassList));
-        localStorage.setItem('boardSectionsClassList', JSON.stringify(boardSectionsClassList));
-        localStorage.setItem('xTurn', saveGameVar.xTurn);
-        localStorage.setItem('playableSection', saveGameVar.playedCellIndex);
+        events.publish('variableChange', [
+            [true, 'savedGameExists'],
+            [saveGameVar.conquestMode, 'conquestMode'],
+            [saveGameVar.xTurn, 'xTurn'],
+            [saveGameVar.playedCellIndex, 'playableSection'],
+            [cellsClassList, 'cellsClassList'],
+            [boardSectionsClassList, 'boardSectionsClassList']
+        ]);
 
         saveButton.innerText = 'Saving...';
         setTimeout(function() {
@@ -34,11 +33,11 @@ const saveGameModule = (() => {
 
     function loadGame() {
         return {
-            boardSectionsClassList: JSON.parse(localStorage.boardSectionsClassList),
-            cellsClassList: JSON.parse(localStorage.cellsClassList),
-            xTurn: (localStorage.xTurn === 'true'),
-            playedCellIndex: parseInt(localStorage.playableSection),
-            conquestMode: (localStorage.conquestMode === 'true')
+            boardSectionsClassList: storage.getLocalStorage('boardSectionsClassList'),
+            cellsClassList: storage.getLocalStorage('cellsClassList'),
+            xTurn: storage.getLocalStorage('xTurn'),
+            playedCellIndex: storage.getLocalStorage('playableSection'),
+            conquestMode: storage.getLocalStorage('conquestMode')
         }
     }
 
@@ -77,7 +76,7 @@ const gameIndicatorsModule = (() => {
     const saveButton = document.getElementById('saveButton'); //Implement auto-saving
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicatorText = document.getElementById('playableSectionIndicatorText');
-    let conquestMode = (localStorage.conquestMode === 'true');
+    let conquestMode = storage.getLocalStorage('conquestMode');
 
 
     //Bind Events
@@ -131,9 +130,7 @@ const gameboardModule = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
-
-    //Board Module?
-    const savedGameExist = (localStorage.savedGameExist === 'true');
+    const savedGameExists = storage.getLocalStorage('savedGameExists');
     let xTurn;
     let playedCellIndex;
     let indexOfPlayedSection;
@@ -145,7 +142,6 @@ const gameboardModule = (() => {
             conquestMode: gameIndicatorsModule.getConquestMode()
         };
     }
-
 
     (function createBoard() {
         const gameBoard = document.getElementById('boardWhole');
@@ -167,7 +163,7 @@ const gameboardModule = (() => {
 
 
     function initializeGame() {
-        if (savedGameExist) { //Check is this runs when pressing restart game after a saved game too?
+        if (savedGameExists) { //Check is this runs when pressing restart game after a saved game too?
             const loadedGame = saveGameModule.loadGame();
             setBoard(loadedGame);
         } else setBoard(null);
