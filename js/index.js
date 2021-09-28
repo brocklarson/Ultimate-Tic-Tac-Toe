@@ -10,14 +10,14 @@ const mainMenu = (() => {
     newGameButton.addEventListener('click', openNewGameModal);
     newGameModalBackground.addEventListener('click', closeNewGameModal);
 
-    if (storage.getLocalStorage('savedGameExist')) continueGameButton.classList.add('show');
+    if (storage.getLocalStorage('savedGameExists')) continueGameButton.classList.add('show');
 
     function startNewGame(conquestMode = false) {
         events.publish('variableChange', [
             [conquestMode, 'conquestMode']
         ]);
         events.publish('variableChange', [
-            [false, 'savedGameExist']
+            [false, 'savedGameExists']
         ]);
         window.location.href = 'html/gameboard.html';
     }

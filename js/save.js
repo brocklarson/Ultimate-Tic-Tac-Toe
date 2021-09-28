@@ -2,9 +2,9 @@ const storage = (() => {
 
     //Bind Events
     events.subscribe('variableChange', updateLocalStorage);
+    events.subscribe('removeStorage', removeStorage);
 
     function updateLocalStorage(dataset) {
-        console.table(dataset);
         if (storageAvailable('localStorage')) {
             dataset.forEach((item) => {
                 localStorage.setItem(item[1], JSON.stringify(item[0]));
@@ -17,6 +17,14 @@ const storage = (() => {
             if (localStorage.getItem(data)) {
                 return JSON.parse(localStorage.getItem(data));
             }
+        }
+    }
+
+    function removeStorage(dataset) {
+        if (storageAvailable('localStorage')) {
+            dataset.forEach((variable) => {
+                localStorage.removeItem(variable);
+            });
         }
     }
 

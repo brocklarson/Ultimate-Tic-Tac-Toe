@@ -52,6 +52,7 @@ const gameOverModule = (() => {
     const winningMessageTextElement = document.querySelector('[data-winning-message-text]');
     const restartButton = document.getElementById('restartButton');
 
+    //Bind Events
     events.subscribe('endGame', endGame);
 
     function endGame(data) {
@@ -60,6 +61,7 @@ const gameOverModule = (() => {
         if (draw) winningMessageTextElement.innerText = 'Draw';
         if (!draw) winningMessageTextElement.innerText = currentClass + "'s Win!";
         winningMessage.classList.add('show');
+        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'cellsClassList', 'boardSectionsClassList']);
         restartButton.addEventListener('click', restartGame);
     }
 
@@ -176,12 +178,12 @@ const gameboardModule = (() => {
             boardSection.forEach(section => {
                 section.classList.remove('X', 'O', 'X-win', 'O-win');
                 section.classList.add('X');
-            })
+            });
             cellElements.forEach(cell => {
                 cell.classList.remove('X', 'O');
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
-            })
+            });
 
             turnIndicator.classList.remove('X', 'O');
             turnIndicator.classList.add('X');
