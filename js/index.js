@@ -16,9 +16,7 @@ const mainMenu = (() => {
         events.publish('variableChange', [
             [conquestMode, 'conquestMode']
         ]);
-        events.publish('variableChange', [
-            [false, 'savedGameExists']
-        ]);
+        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         window.location.href = 'html/gameboard.html';
     }
 

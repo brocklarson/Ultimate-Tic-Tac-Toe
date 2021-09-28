@@ -10,10 +10,6 @@ body {
     padding: 0;
 }
 
-body.waiting * {
-    cursor: wait !important;
-}
-
 :root {
     --base-background-color: linear-gradient(#F2D9CB, #33AAA1);
     --board-size: 80vh;
@@ -907,33 +903,6 @@ button:focus {
 }
 
 @media only screen and (max-aspect-ratio: 8/10) {
-    O-win:before {
-        border: solid calc(75vw * 0.3 * 0.15) var(--section-win-marker-color);
-        height: calc(75vw * 0.3 * 0.85);
-        width: calc(75vw * 0.3 * 0.85);
-    }
-    O::before {
-        border-width: calc(var(--marker-size)*0.2);
-        height: calc(var(--marker-size) * 0.95);
-        width: calc(var(--marker-size) * 0.95);
-    }
-    O::before {
-        border-width: calc(75vw * 0.01275);
-        height: calc(75vw * 0.0765);
-        width: calc(75vw * 0.0765);
-    }
-    X-win:after {
-        height: calc(75vw * 0.3);
-        width: calc(75vw * 0.3 * 0.15);
-    }
-    X::after {
-        height: calc(var(--marker-size) * 1);
-        width: calc(var(--marker-size) * 0.2);
-    }
-    X::after {
-        height: calc(75vw * 0.08);
-        width: calc(75vw * 0.01215);
-    }
      :root {
         --board-size: 100vw;
         --cell-size: 9.5vw;
@@ -946,15 +915,15 @@ button:focus {
         width: 40vw;
     }
     #saveButton {
-        left: 25%;
         position: absolute;
         top: 25%;
+        left: 25%;
         transform: translate(-50%, -50%);
     }
     #mainMenuButton {
         position: absolute;
-        right: 25%;
         top: 25%;
+        right: 25%;
         transform: translate(50%, -50%);
     }
     .board-whole {
@@ -964,16 +933,25 @@ button:focus {
         padding: 1.5vw;
     }
     .turn-indicator {
+        position: absolute;
         bottom: 25%;
         left: 25%;
-        position: absolute;
-        transform: translate(-50%, 50%);
         width: 6vh;
+        transform: translate(-50%, 50%);
     }
     .turn-indicator.X::before,
-    .turn-indicator. .turn-indicator. .playable-section-indicator {
-        bottom: 25%;
+    .turn-indicator.X::after {
+        height: calc(var(--marker-size) * 1);
+        width: calc(var(--marker-size) * 0.2);
+    }
+    .turn-indicator.O::before {
+        border-width: calc(var(--marker-size)*0.2);
+        height: calc(var(--marker-size) * 0.95);
+        width: calc(var(--marker-size) * 0.95);
+    }
+    .playable-section-indicator {
         position: absolute;
+        bottom: 25%;
         right: 25%;
         transform: translate(50%, 50%);
     }
@@ -984,8 +962,8 @@ button:focus {
         font-size: 13vw;
     }
     .winning-message button {
-        font-size: 7vw;
         height: 10vw;
+        font-size: 7vw;
     }
     /*MAIN MENU SCREEN*/
     .game-title {
@@ -1003,9 +981,9 @@ button:focus {
     }
     /*THEMES SCREEN*/
     .back-button {
-        font-size: 8vw;
-        height: 12vw;
         width: calc(var(--board-size)*0.9);
+        height: 12vw;
+        font-size: 8vw;
     }
     .themes-button-container button {
         border: solid 1vw #333333;
@@ -1013,62 +991,53 @@ button:focus {
     /*HOW TO PLAY SCREEN*/
     .how-to-play-game-indicators,
     .how-to-play-board-whole {
-        flex-grow: 50;
         height: 100vw;
         max-height: 50vh;
-        max-width: 50vh;
         width: 100vw;
+        max-width: 50vh;
+        flex-grow: 50;
     }
-    .how-to-play-board-segment. .how-to-play-board-segment.X-win:before,
-    .how-to-play-board-segment. .how-to-play-cell {
+    .how-to-play-board-segment.O-win:before {
+        border: solid calc(75vw * 0.3 * 0.15) var(--section-win-marker-color);
+        height: calc(75vw * 0.3 * 0.85);
+        width: calc(75vw * 0.3 * 0.85);
+    }
+    .how-to-play-board-segment.X-win:before,
+    .how-to-play-board-segment.X-win:after {
+        height: calc(75vw * 0.3);
+        width: calc(75vw * 0.3 * 0.15);
+    }
+    .how-to-play-cell {
         height: calc(100vw * 0.09);
         max-height: calc(50vh * 0.09);
-        max-width: calc(50vh * 0.09);
         width: calc(100vw * 0.09);
+        max-width: calc(50vh * 0.09);
     }
     .how-to-play-cell.X::before,
-    .how-to-play-cell. .how-to-play-cell. .how-to-play-board-segment {
+    .how-to-play-cell.X::after {
+        height: calc(75vw * 0.08);
+        width: calc(75vw * 0.01215);
+    }
+    .how-to-play-cell.O::before {
+        border-width: calc(75vw * 0.01275);
+        height: calc(75vw * 0.0765);
+        width: calc(75vw * 0.0765);
+    }
+    .how-to-play-board-segment {
         padding: 1vw;
     }
     .how-to-play-text-container {
         font-size: 4vw;
     }
     /*.how-to-play-turn-indicator.circled{
-        padding: 8vw;
-    }*/
+       padding: 8vw;
+   }*/
     .how-to-play-playable-section-indicator.circled {
         padding: 8vw;
     }
 }
 
 @media only screen and (max-aspect-ratio: 6/10) {
-    O-win:before {
-        border: solid calc(90vw * 0.3 * 0.15) var(--section-win-marker-color);
-        height: calc(90vw * 0.3 * 0.85);
-        width: calc(90vw * 0.3 * 0.85);
-    }
-    O::before {
-        border-width: calc(var(--marker-size)*0.25);
-        height: calc(var(--marker-size) * 1.2);
-        width: calc(var(--marker-size) * 1.2);
-    }
-    O::before {
-        border-width: calc(90vw * 0.01275);
-        height: calc(90vw * 0.0765);
-        width: calc(90vw * 0.0765);
-    }
-    X-win:after {
-        height: calc(90vw * 0.3);
-        width: calc(90vw * 0.3 * 0.15);
-    }
-    X::after {
-        height: calc(var(--marker-size) * 1.5);
-        width: calc(var(--marker-size) * 0.25);
-    }
-    X::after {
-        height: calc(90vw * 0.08);
-        width: calc(90vw * 0.01215);
-    }
     /*GAMEBOARD SCREEN*/
     .in-game-info-container {
         height: 33vh;
@@ -1078,42 +1047,68 @@ button:focus {
         height: 67vh;
     }
     .in-game-info-container button {
-        font-size: 5vw;
         width: 40vw;
+        font-size: 5vw;
     }
     #saveButton {
-        left: 25%;
         position: absolute;
         top: 25%;
+        left: 25%;
         transform: translate(-50%, -50%);
     }
     #mainMenuButton {
         position: absolute;
-        right: 25%;
         top: 25%;
+        right: 25%;
         transform: translate(50%, -50%);
     }
     .turn-indicator {
+        position: absolute;
         bottom: 25%;
         left: 25%;
-        position: absolute;
         transform: translate(-50%, 50%);
     }
     .playable-section-indicator {
-        bottom: 25%;
         position: absolute;
+        bottom: 25%;
         right: 25%;
         transform: translate(50%, 50%);
     }
     .turn-indicator.X::before,
-    .turn-indicator. .turn-indicator. .playable-section-indicator p {
+    .turn-indicator.X::after {
+        height: calc(var(--marker-size) * 1.5);
+        width: calc(var(--marker-size) * 0.25);
+    }
+    .turn-indicator.O::before {
+        border-width: calc(var(--marker-size)*0.25);
+        height: calc(var(--marker-size) * 1.2);
+        width: calc(var(--marker-size) * 1.2);
+    }
+    .playable-section-indicator p {
         font-size: 7vw;
     }
     /*HOW TO PLAY SCREEN*/
     .how-to-play-text-container {
         font-size: 4.5vw;
     }
-    .how-to-play-board-segment. .how-to-play-board-segment.X-win:before,
-    .how-to-play-board-segment. .how-to-play-cell.X::before,
-    .how-to-play-cell. .how-to-play-cell.
+    .how-to-play-board-segment.O-win:before {
+        border: solid calc(90vw * 0.3 * 0.15) var(--section-win-marker-color);
+        height: calc(90vw * 0.3 * 0.85);
+        width: calc(90vw * 0.3 * 0.85);
+    }
+    .how-to-play-board-segment.X-win:before,
+    .how-to-play-board-segment.X-win:after {
+        height: calc(90vw * 0.3);
+        width: calc(90vw * 0.3 * 0.15);
+    }
+    .how-to-play-cell.X::before,
+    .how-to-play-cell.X::after {
+        height: calc(90vw * 0.08);
+        width: calc(90vw * 0.01215);
+    }
+    .how-to-play-cell.O::before {
+        border-width: calc(90vw * 0.01275);
+        height: calc(90vw * 0.0765);
+        width: calc(90vw * 0.0765);
+    }
 }

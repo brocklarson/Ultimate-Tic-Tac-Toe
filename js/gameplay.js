@@ -1,40 +1,34 @@
 //SAVE GAME MODULE
 const saveGameModule = (() => {
-    function saveGame() {
-        const cellElements = document.querySelectorAll('.cell');
-        const boardSection = document.querySelectorAll('.board-segment');
-        const saveGameVar = gameboardModule.getSaveVar();
-        document.body.classList.add('waiting');
 
-        let cellsClassList = [];
-        for (i = 0; i < 81; i++) {
-            cellsClassList[i] = cellElements[i].classList;
-        }
-        let boardSectionsClassList = [];
-        for (i = 0; i < 9; i++) {
-            boardSectionsClassList[i] = boardSection[i].classList;
-        }
+    function saveGame() {
+        // const smallCells = document.querySelectorAll('.cell');
+        // const largeCells = document.querySelectorAll('.board-segment');
+        const saveGameVar = gameboardModule.getGameState();
+
+        // let smallCellsClassList = [];
+        // for (i = 0; i < 81; i++) {
+        //     smallCellsClassList[i] = smallCells[i].classList;
+        // }
+        // let largeCellsClassList = [];
+        // for (i = 0; i < 9; i++) {
+        //     largeCellsClassList[i] = largeCells[i].classList;
+        // }
 
         events.publish('variableChange', [
             [true, 'savedGameExists'],
             [saveGameVar.conquestMode, 'conquestMode'],
             [saveGameVar.xTurn, 'xTurn'],
             [saveGameVar.playedCellIndex, 'playableSection'],
-            [cellsClassList, 'cellsClassList'],
-            [boardSectionsClassList, 'boardSectionsClassList']
+            [saveGameVar.smallCellsClassList, 'smallCellsClassList'],
+            [saveGameVar.largeCellsClassList, 'largeCellsClassList']
         ]);
-
-        saveButton.innerText = 'Saving...';
-        setTimeout(function() {
-            saveButton.innerText = "Save Game";
-            document.body.classList.remove('waiting');
-        }, 500);
     }
 
     function loadGame() {
         return {
-            boardSectionsClassList: storage.getLocalStorage('boardSectionsClassList'),
-            cellsClassList: storage.getLocalStorage('cellsClassList'),
+            largeCellsClassList: storage.getLocalStorage('largeCellsClassList'),
+            smallCellsClassList: storage.getLocalStorage('smallCellsClassList'),
             xTurn: storage.getLocalStorage('xTurn'),
             playedCellIndex: storage.getLocalStorage('playableSection'),
             conquestMode: storage.getLocalStorage('conquestMode')
@@ -61,7 +55,7 @@ const gameOverModule = (() => {
         if (draw) winningMessageTextElement.innerText = 'Draw';
         if (!draw) winningMessageTextElement.innerText = currentClass + "'s Win!";
         winningMessage.classList.add('show');
-        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'cellsClassList', 'boardSectionsClassList']);
+        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         restartButton.addEventListener('click', restartGame);
     }
 
@@ -75,14 +69,12 @@ const gameOverModule = (() => {
 //GAME INDICATORS MODULE
 const gameIndicatorsModule = (() => {
     //Cache DOM
-    const saveButton = document.getElementById('saveButton'); //Implement auto-saving
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicatorText = document.getElementById('playableSectionIndicatorText');
     let conquestMode = storage.getLocalStorage('conquestMode');
 
 
     //Bind Events
-    saveButton.addEventListener('click', saveGameModule.saveGame);
     events.subscribe('playableSection', setPlayableSectionIndicatorText);
 
 
@@ -137,14 +129,6 @@ const gameboardModule = (() => {
     let playedCellIndex;
     let indexOfPlayedSection;
 
-    function getSaveVar() {
-        return { //maybe add cell and borad class lists here?
-            xTurn,
-            playedCellIndex,
-            conquestMode: gameIndicatorsModule.getConquestMode()
-        };
-    }
-
     (function createBoard() {
         const gameBoard = document.getElementById('boardWhole');
         for (i = 0; i < 9; i++) {
@@ -158,14 +142,14 @@ const gameboardModule = (() => {
     })();
 
     //Cache DOM
-    const boardSection = document.querySelectorAll('.board-segment');
-    const cellElements = document.querySelectorAll('.cell');
+    const largeCells = document.querySelectorAll('.board-segment');
+    const smallCells = document.querySelectorAll('.cell');
 
     events.subscribe('restartGame', initializeGame);
 
 
     function initializeGame() {
-        if (savedGameExists) { //Check is this runs when pressing restart game after a saved game too?
+        if (savedGameExists) {
             const loadedGame = saveGameModule.loadGame();
             setBoard(loadedGame);
         } else setBoard(null);
@@ -175,11 +159,11 @@ const gameboardModule = (() => {
     function setBoard(loadedGame) {
         let sentToFullSection = false;
         if (loadedGame === null) {
-            boardSection.forEach(section => {
+            largeCells.forEach(section => {
                 section.classList.remove('X', 'O', 'X-win', 'O-win');
                 section.classList.add('X');
             });
-            cellElements.forEach(cell => {
+            smallCells.forEach(cell => {
                 cell.classList.remove('X', 'O');
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
@@ -192,21 +176,21 @@ const gameboardModule = (() => {
             xTurn = loadedGame.xTurn;
             playedCellIndex = loadedGame.playedCellIndex;
             conquestMode = loadedGame.conquestMode;
-            cellsClassList = loadedGame.cellsClassList;
-            boardSectionsClassList = loadedGame.boardSectionsClassList;
+            smallCellsClassList = loadedGame.smallCellsClassList;
+            largeCellsClassList = loadedGame.largeCellsClassList;
 
             for (i = 0; i < 81; i++) {
-                cellElements[i].classList.add(Object.values(cellsClassList[i])[1]); //better way to do this? What if class isn't always in [1] position?
+                smallCells[i].classList.add(Object.values(smallCellsClassList[i])[1]); //better way to do this? What if class isn't always in [1] position?
             }
             for (i = 0; i < 9; i++) {
-                boardSection[i].classList.add(Object.values(boardSectionsClassList[i])[1]); //same as above
+                largeCells[i].classList.add(Object.values(largeCellsClassList[i])[1]); //same as above
             }
 
-            boardSection.forEach(section => {
+            largeCells.forEach(section => {
                 section.classList.remove('undefined');
             })
 
-            cellElements.forEach(cell => {
+            smallCells.forEach(cell => {
                 cell.classList.remove('undefined');
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
@@ -253,11 +237,12 @@ const gameboardModule = (() => {
             setBoardHoverClass(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
+        saveGameModule.saveGame();
     }
 
     function placeCellMarker(cell, currentClass, indexOfPlayedSection) {
         if (cell.classList.contains('X') || cell.classList.contains('O')) return false;
-        if (boardSection[indexOfPlayedSection].classList.contains(currentClass) === false) return false;
+        if (largeCells[indexOfPlayedSection].classList.contains(currentClass) === false) return false;
 
         cell.classList.add(currentClass);
         return true;
@@ -270,24 +255,24 @@ const gameboardModule = (() => {
     }
 
     function setBoardHoverClass(playedCellIndex, sentToFullSection) {
-        boardSection.forEach(section => section.classList.remove('X', 'O'));
+        largeCells.forEach(section => section.classList.remove('X', 'O'));
 
         //If section is full, sets class of each section to 'X' or 'O' to allow any section to be played on/hovered over
         if (sentToFullSection) {
-            if (xTurn) boardSection.forEach(section => section.classList.add('X'));
-            if (!xTurn) boardSection.forEach(section => section.classList.add('O'));
+            if (xTurn) largeCells.forEach(section => section.classList.add('X'));
+            if (!xTurn) largeCells.forEach(section => section.classList.add('O'));
             return;
         }
 
-        if (xTurn) boardSection[playedCellIndex].classList.add('X');
-        if (!xTurn) boardSection[playedCellIndex].classList.add('O');
+        if (xTurn) largeCells[playedCellIndex].classList.add('X');
+        if (!xTurn) largeCells[playedCellIndex].classList.add('O');
     }
 
     function isSectionFull(playedCellIndex) {
         if (isNaN(playedCellIndex)) {
             return true;
         }
-        return Array.from(boardSection[playedCellIndex].children).every(child =>
+        return Array.from(largeCells[playedCellIndex].children).every(child =>
             child.classList.contains('X') || child.classList.contains('O')
         );
     }
@@ -317,17 +302,36 @@ const gameboardModule = (() => {
     function checkGameWin(currentWinCheckClass) {
         return WINNING_COMBINATIONS.some(combination => {
             return combination.every(index => {
-                return boardSection[index].classList.contains(currentWinCheckClass);
+                return largeCells[index].classList.contains(currentWinCheckClass);
             })
         })
     }
 
     function checkDraw() {
-        return [...cellElements].every(cell => {
+        return [...smallCells].every(cell => {
             return cell.classList.contains('X') || cell.classList.contains('O');
         })
     }
 
-    return { getSaveVar }
+    function getGameState() {
+        let smallCellsClassList = [];
+        for (i = 0; i < 81; i++) {
+            smallCellsClassList[i] = smallCells[i].classList;
+        }
+        let largeCellsClassList = [];
+        for (i = 0; i < 9; i++) {
+            largeCellsClassList[i] = largeCells[i].classList;
+        }
+
+        return { //maybe add cell and board class lists here?
+            xTurn,
+            playedCellIndex,
+            conquestMode: gameIndicatorsModule.getConquestMode(),
+            smallCellsClassList,
+            largeCellsClassList
+        };
+    }
+
+    return { getGameState }
 
 })();
