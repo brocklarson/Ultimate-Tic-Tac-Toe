@@ -1,27 +1,15 @@
 //SAVE GAME MODULE
 const saveGameModule = (() => {
+    events.subscribe('saveGame', saveGame)
 
-    function saveGame() {
-        // const smallCells = document.querySelectorAll('.cell');
-        // const largeCells = document.querySelectorAll('.board-segment');
-        const saveGameVar = gameboardModule.getGameState();
-
-        // let smallCellsClassList = [];
-        // for (i = 0; i < 81; i++) {
-        //     smallCellsClassList[i] = smallCells[i].classList;
-        // }
-        // let largeCellsClassList = [];
-        // for (i = 0; i < 9; i++) {
-        //     largeCellsClassList[i] = largeCells[i].classList;
-        // }
-
+    function saveGame(gameState) {
         events.publish('variableChange', [
             [true, 'savedGameExists'],
-            [saveGameVar.conquestMode, 'conquestMode'],
-            [saveGameVar.xTurn, 'xTurn'],
-            [saveGameVar.playedCellIndex, 'playableSection'],
-            [saveGameVar.smallCellsClassList, 'smallCellsClassList'],
-            [saveGameVar.largeCellsClassList, 'largeCellsClassList']
+            [gameState.conquestMode, 'conquestMode'],
+            [gameState.xTurn, 'xTurn'],
+            [gameState.playedCellIndex, 'playableSection'],
+            [gameState.smallCellsClassList, 'smallCellsClassList'],
+            [gameState.largeCellsClassList, 'largeCellsClassList']
         ]);
     }
 
@@ -35,12 +23,12 @@ const saveGameModule = (() => {
         }
     }
 
-    return { saveGame, loadGame }
+    return { loadGame }
 
 })();
 
 //GAME OVER MODULE
-const gameOverModule = (() => {
+const gameEndModule = (() => {
     //Cache DOM
     const winningMessage = document.getElementById('winningMessage');
     const winningMessageTextElement = document.querySelector('[data-winning-message-text]');
@@ -51,9 +39,11 @@ const gameOverModule = (() => {
 
     function endGame(data) {
         const draw = data[0];
-        const currentClass = data[1];
+        const currentPlayer = data[1];
+
         if (draw) winningMessageTextElement.innerText = 'Draw';
-        if (!draw) winningMessageTextElement.innerText = currentClass + "'s Win!";
+        else winningMessageTextElement.innerText = `${currentPlayer} Wins!`;
+
         winningMessage.classList.add('show');
         events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         restartButton.addEventListener('click', restartGame);
@@ -70,12 +60,12 @@ const gameOverModule = (() => {
 const gameIndicatorsModule = (() => {
     //Cache DOM
     const turnIndicator = document.getElementById('turnIndicator');
-    const playableSectionIndicatorText = document.getElementById('playableSectionIndicatorText');
-    let conquestMode = storage.getLocalStorage('conquestMode');
-
+    const playableSectionIndicator = document.getElementById('playableSectionIndicatorText');
+    const conquestMode = storage.getLocalStorage('conquestMode');
 
     //Bind Events
-    events.subscribe('playableSection', setPlayableSectionIndicatorText);
+    events.subscribe('playableSection', setplayableSectionIndicator);
+    events.subscribe('turnIndicator', setPlayersTurn);
 
 
     (function setConquestMode() {
@@ -86,34 +76,34 @@ const gameIndicatorsModule = (() => {
         return conquestMode;
     }
 
-    function setPlayableSectionIndicatorText(data) {
+    function setplayableSectionIndicator(data) {
         const playedCellIndex = data[0];
         const sentToFullSection = data[1];
 
-        if (sentToFullSection) {
-            playableSectionIndicatorText.innerText = 'Play\nAnywhere';
-            return;
-        }
+        if (sentToFullSection) playableSectionIndicator.innerText = 'Play\nAnywhere';
+        else if (playedCellIndex === 0) playableSectionIndicator.innerText = 'Top\nLeft';
+        else if (playedCellIndex === 1) playableSectionIndicator.innerText = 'Top\nMiddle';
+        else if (playedCellIndex === 2) playableSectionIndicator.innerText = 'Top\nRight';
+        else if (playedCellIndex === 3) playableSectionIndicator.innerText = 'Middle\nLeft';
+        else if (playedCellIndex === 4) playableSectionIndicator.innerText = 'Center';
+        else if (playedCellIndex === 5) playableSectionIndicator.innerText = 'Middle\nRight';
+        else if (playedCellIndex === 6) playableSectionIndicator.innerText = 'Bottom\nLeft';
+        else if (playedCellIndex === 7) playableSectionIndicator.innerText = 'Bottom\nMiddle';
+        else if (playedCellIndex === 8) playableSectionIndicator.innerText = 'Bottom\nRight';
+        else playableSectionIndicator.innerText = 'Play\nAnywhere';
+    }
 
-        if (playedCellIndex === 0) playableSectionIndicatorText.innerText = 'Top\nLeft';
-        else if (playedCellIndex === 1) playableSectionIndicatorText.innerText = 'Top\nMiddle';
-        else if (playedCellIndex === 2) playableSectionIndicatorText.innerText = 'Top\nRight';
-        else if (playedCellIndex === 3) playableSectionIndicatorText.innerText = 'Middle\nLeft';
-        else if (playedCellIndex === 4) playableSectionIndicatorText.innerText = 'Center';
-        else if (playedCellIndex === 5) playableSectionIndicatorText.innerText = 'Middle\nRight';
-        else if (playedCellIndex === 6) playableSectionIndicatorText.innerText = 'Bottom\nLeft';
-        else if (playedCellIndex === 7) playableSectionIndicatorText.innerText = 'Bottom\nMiddle';
-        else if (playedCellIndex === 8) playableSectionIndicatorText.innerText = 'Bottom\nRight';
-        else playableSectionIndicatorText.innerText = 'Play\nAnywhere';
+    function setPlayersTurn(xTurn) {
+        playersTurn = (xTurn === true) ? 'X' : 'O';
+        turnIndicator.classList.remove('X', 'O');
+        turnIndicator.classList.add(playersTurn);
     }
 
     return { getConquestMode }
-
 })();
 
 //GAMEPLAY MODULE
 const gameboardModule = (() => {
-    //Variables
     const WINNING_COMBINATIONS = [
         [0, 1, 2],
         [3, 4, 5],
@@ -169,8 +159,6 @@ const gameboardModule = (() => {
                 cell.addEventListener('click', handleClick);
             });
 
-            turnIndicator.classList.remove('X', 'O');
-            turnIndicator.classList.add('X');
             xTurn = true;
         } else {
             xTurn = loadedGame.xTurn;
@@ -196,9 +184,6 @@ const gameboardModule = (() => {
                 cell.addEventListener('click', handleClick);
             })
 
-            turnIndicator.classList.remove('X', 'O');
-            if (xTurn) turnIndicator.classList.add('X');
-            if (!xTurn) turnIndicator.classList.add('O');
 
             if (isSectionFull(playedCellIndex)) {
                 setBoardHoverClass(playedCellIndex, true);
@@ -211,25 +196,25 @@ const gameboardModule = (() => {
             if (conquestMode) conquestModeIndicator.classList.add('show');
             else conquestModeIndicator.classList.remove('show');
         }
-
+        events.publish('turnIndicator', xTurn);
         events.publish('playableSection', [playedCellIndex, sentToFullSection]);
     }
 
     function handleClick(e) {
         const cell = e.target;
-        const currentClass = xTurn ? 'X' : 'O';
+        const currentPlayer = xTurn ? 'X' : 'O';
         const currentWinCheckClass = xTurn ? 'X-win' : 'O-win';
         playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
         indexOfPlayedSection = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
 
-        if (!placeCellMarker(cell, currentClass, indexOfPlayedSection)) return;
+        if (!placeCellMarker(cell, currentPlayer, indexOfPlayedSection)) return;
 
-        if (checkSectionWin(cell, currentClass, playedCellIndex)) placeSectionWinMarker(cell);
+        if (checkSectionWin(cell, currentPlayer, playedCellIndex)) placeSectionWinMarker(cell);
 
-        if (checkGameWin(currentWinCheckClass)) { events.publish('endGame', [false, currentClass]); return; }
-        if (checkDraw()) { events.publish('endGame', [true, currentClass]); return; }
+        if (checkGameWin(currentWinCheckClass)) { events.publish('endGame', [false, currentPlayer]); return; }
+        if (checkDraw()) { events.publish('endGame', [true, currentPlayer]); return; }
 
-        switchTurn(currentClass);
+        switchTurn();
         if (isSectionFull(playedCellIndex)) {
             setBoardHoverClass(playedCellIndex, true);
             events.publish('playableSection', [playedCellIndex, true]);
@@ -237,21 +222,20 @@ const gameboardModule = (() => {
             setBoardHoverClass(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
-        saveGameModule.saveGame();
+        events.publish('saveGame', getGameState());
     }
 
-    function placeCellMarker(cell, currentClass, indexOfPlayedSection) {
+    function placeCellMarker(cell, currentPlayer, indexOfPlayedSection) {
         if (cell.classList.contains('X') || cell.classList.contains('O')) return false;
-        if (largeCells[indexOfPlayedSection].classList.contains(currentClass) === false) return false;
+        if (largeCells[indexOfPlayedSection].classList.contains(currentPlayer) === false) return false;
 
-        cell.classList.add(currentClass);
+        cell.classList.add(currentPlayer);
         return true;
     }
 
     function switchTurn() {
         xTurn = !xTurn;
-        if (xTurn) turnIndicator.classList.replace('O', 'X');
-        if (!xTurn) turnIndicator.classList.replace('X', 'O');
+        events.publish('turnIndicator', xTurn);
     }
 
     function setBoardHoverClass(playedCellIndex, sentToFullSection) {
@@ -284,7 +268,7 @@ const gameboardModule = (() => {
         if (!xTurn) cell.parentNode.classList.add('O-win');
     }
 
-    function checkSectionWin(cell, currentClass, playedCellIndex) {
+    function checkSectionWin(cell, currentPlayer, playedCellIndex) {
         if (!gameIndicatorsModule.getConquestMode()) {
             if (cell.parentNode.classList.contains('X-win') || cell.parentNode.classList.contains('O-win')) {
                 return false;
@@ -294,7 +278,7 @@ const gameboardModule = (() => {
         //Checks if the winning combination is in the WINNING_COMBINATIONS array AND includes the index of the played cell
         return WINNING_COMBINATIONS.find(combination => {
             return combination.every(index => {
-                return cell.parentNode.children[index].classList.contains(currentClass);
+                return cell.parentNode.children[index].classList.contains(currentPlayer);
             }) && ([...combination].includes(playedCellIndex));
         });
     }
