@@ -881,6 +881,8 @@ button:focus {
     background: none;
     border-width: 0 2px 2px 0;
     border: solid var(--marker-color);
+    border-top: none;
+    border-left: none;
     display: inline-block;
     height: 2vh;
     justify-content: center;
