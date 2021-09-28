@@ -103,7 +103,7 @@ const gameIndicatorsModule = (() => {
 })();
 
 //GAMEPLAY MODULE
-const gameboardModule = (() => {
+const gameplayModule = (() => {
     const WINNING_COMBINATIONS = [
         [0, 1, 2],
         [3, 4, 5],
@@ -114,10 +114,8 @@ const gameboardModule = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
-    const savedGameExists = storage.getLocalStorage('savedGameExists');
     let xTurn;
     let playedCellIndex;
-    let indexOfPlayedSection;
 
     (function createBoard() {
         const gameBoard = document.getElementById('boardWhole');
@@ -135,31 +133,31 @@ const gameboardModule = (() => {
     const largeCells = document.querySelectorAll('.board-segment');
     const smallCells = document.querySelectorAll('.cell');
 
+    //Bind Events
     events.subscribe('restartGame', initializeGame);
 
-
     function initializeGame() {
+        const savedGameExists = storage.getLocalStorage('savedGameExists');
         if (savedGameExists) {
             const loadedGame = saveGameModule.loadGame();
             setBoard(loadedGame);
-        } else setBoard(null);
+        } else setBoard('newGame');
     }
     initializeGame();
 
     function setBoard(loadedGame) {
         let sentToFullSection = false;
-        if (loadedGame === null) {
+        if (loadedGame === 'newGame') {
+            xTurn = true;
             largeCells.forEach(section => {
                 section.classList.remove('X', 'O', 'X-win', 'O-win');
-                section.classList.add('X');
+                section.classList.add('X'); //Allows hover states
             });
             smallCells.forEach(cell => {
                 cell.classList.remove('X', 'O');
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
             });
-
-            xTurn = true;
         } else {
             xTurn = loadedGame.xTurn;
             playedCellIndex = loadedGame.playedCellIndex;
@@ -167,11 +165,11 @@ const gameboardModule = (() => {
             smallCellsClassList = loadedGame.smallCellsClassList;
             largeCellsClassList = loadedGame.largeCellsClassList;
 
-            for (i = 0; i < 81; i++) {
+            for (i = 0; i < smallCells.length; i++) {
                 smallCells[i].classList.add(Object.values(smallCellsClassList[i])[1]); //better way to do this? What if class isn't always in [1] position?
             }
-            for (i = 0; i < 9; i++) {
-                largeCells[i].classList.add(Object.values(largeCellsClassList[i])[1]); //same as above
+            for (i = 0; i < largeCells.length; i++) {
+                largeCells[i].classList.add(Object.values(largeCellsClassList[i])[1]); //same as above. Also doesn't it get saved as array? So why object.values?
             }
 
             largeCells.forEach(section => {
@@ -186,15 +184,14 @@ const gameboardModule = (() => {
 
 
             if (isSectionFull(playedCellIndex)) {
-                setBoardHoverClass(playedCellIndex, true);
+                setPlayableSection(playedCellIndex, true);
                 sentToFullSection = true;
             } else {
-                setBoardHoverClass(playedCellIndex, false);
+                setPlayableSection(playedCellIndex, false);
                 sentToFullSection = false;
             }
 
             if (conquestMode) conquestModeIndicator.classList.add('show');
-            else conquestModeIndicator.classList.remove('show');
         }
         events.publish('turnIndicator', xTurn);
         events.publish('playableSection', [playedCellIndex, sentToFullSection]);
@@ -203,79 +200,49 @@ const gameboardModule = (() => {
     function handleClick(e) {
         const cell = e.target;
         const currentPlayer = xTurn ? 'X' : 'O';
-        const currentWinCheckClass = xTurn ? 'X-win' : 'O-win';
+        const currentPlayerWin = xTurn ? 'X-win' : 'O-win';
+        const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
         playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
-        indexOfPlayedSection = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
 
-        if (!placeCellMarker(cell, currentPlayer, indexOfPlayedSection)) return;
+        if (!validLocation(cell, currentPlayer, largeCellIndex)) return;
+        else placeMarker(cell, currentPlayer);
 
-        if (checkSectionWin(cell, currentPlayer, playedCellIndex)) placeSectionWinMarker(cell);
-
-        if (checkGameWin(currentWinCheckClass)) { events.publish('endGame', [false, currentPlayer]); return; }
+        if (checkSectionWin(cell, currentPlayer, playedCellIndex)) placeSectionWinMarker(cell, currentPlayerWin);
+        if (checkGameWin(currentPlayerWin)) { events.publish('endGame', [false, currentPlayer]); return; }
         if (checkDraw()) { events.publish('endGame', [true, currentPlayer]); return; }
 
         switchTurn();
+
         if (isSectionFull(playedCellIndex)) {
-            setBoardHoverClass(playedCellIndex, true);
+            setPlayableSection(playedCellIndex, true);
             events.publish('playableSection', [playedCellIndex, true]);
         } else {
-            setBoardHoverClass(playedCellIndex, false);
+            setPlayableSection(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
         events.publish('saveGame', getGameState());
     }
 
-    function placeCellMarker(cell, currentPlayer, indexOfPlayedSection) {
+    function validLocation(cell, currentPlayer, largeCellIndex) {
         if (cell.classList.contains('X') || cell.classList.contains('O')) return false;
-        if (largeCells[indexOfPlayedSection].classList.contains(currentPlayer) === false) return false;
-
-        cell.classList.add(currentPlayer);
+        if (largeCells[largeCellIndex].classList.contains(currentPlayer) === false) return false;
         return true;
     }
 
-    function switchTurn() {
-        xTurn = !xTurn;
-        events.publish('turnIndicator', xTurn);
-    }
-
-    function setBoardHoverClass(playedCellIndex, sentToFullSection) {
-        largeCells.forEach(section => section.classList.remove('X', 'O'));
-
-        //If section is full, sets class of each section to 'X' or 'O' to allow any section to be played on/hovered over
-        if (sentToFullSection) {
-            if (xTurn) largeCells.forEach(section => section.classList.add('X'));
-            if (!xTurn) largeCells.forEach(section => section.classList.add('O'));
-            return;
-        }
-
-        if (xTurn) largeCells[playedCellIndex].classList.add('X');
-        if (!xTurn) largeCells[playedCellIndex].classList.add('O');
-    }
-
-    function isSectionFull(playedCellIndex) {
-        if (isNaN(playedCellIndex)) {
-            return true;
-        }
-        return Array.from(largeCells[playedCellIndex].children).every(child =>
-            child.classList.contains('X') || child.classList.contains('O')
-        );
-    }
-
-    function placeSectionWinMarker(cell) {
-        cell.parentNode.classList.remove('X-win', 'O-win');
-
-        if (xTurn) cell.parentNode.classList.add('X-win');
-        if (!xTurn) cell.parentNode.classList.add('O-win');
+    function placeMarker(cell, currentPlayer) {
+        cell.classList.add(currentPlayer);
     }
 
     function checkSectionWin(cell, currentPlayer, playedCellIndex) {
-        if (!gameIndicatorsModule.getConquestMode()) {
+        const conquestMode = gameIndicatorsModule.getConquestMode();
+        if (!conquestMode) {
             if (cell.parentNode.classList.contains('X-win') || cell.parentNode.classList.contains('O-win')) {
                 return false;
             }
         }
 
-        //Checks if the winning combination is in the WINNING_COMBINATIONS array AND includes the index of the played cell
+        //Checks if the winning combination is in the WINNING_COMBINATIONS array 
+        //AND includes the index of the played cell
         return WINNING_COMBINATIONS.find(combination => {
             return combination.every(index => {
                 return cell.parentNode.children[index].classList.contains(currentPlayer);
@@ -283,18 +250,44 @@ const gameboardModule = (() => {
         });
     }
 
-    function checkGameWin(currentWinCheckClass) {
+    function placeSectionWinMarker(cell, currentPlayerWin) {
+        cell.parentNode.classList.remove('X-win', 'O-win');
+        cell.parentNode.classList.add(currentPlayerWin);
+    }
+
+    function checkGameWin(currentPlayerWin) {
+        //Checks if the winning combination is in the WINNING_COMBINATIONS array
         return WINNING_COMBINATIONS.some(combination => {
             return combination.every(index => {
-                return largeCells[index].classList.contains(currentWinCheckClass);
-            })
-        })
+                return largeCells[index].classList.contains(currentPlayerWin);
+            });
+        });
     }
 
     function checkDraw() {
         return [...smallCells].every(cell => {
             return cell.classList.contains('X') || cell.classList.contains('O');
-        })
+        });
+    }
+
+    function switchTurn() {
+        xTurn = !xTurn;
+        events.publish('turnIndicator', xTurn);
+    }
+
+    function isSectionFull(playedCellIndex) {
+        if (isNaN(playedCellIndex)) return true;
+        return Array.from(largeCells[playedCellIndex].children).every(child => {
+            return child.classList.contains('X') || child.classList.contains('O');
+        });
+    }
+
+    function setPlayableSection(playedCellIndex, sentToFullSection) {
+        const currentPlayer = xTurn ? 'X' : 'O';
+
+        largeCells.forEach(section => section.classList.remove('X', 'O'));
+        if (sentToFullSection) largeCells.forEach(section => section.classList.add(currentPlayer));
+        else largeCells[playedCellIndex].classList.add(currentPlayer);
     }
 
     function getGameState() {
@@ -306,8 +299,7 @@ const gameboardModule = (() => {
         for (i = 0; i < 9; i++) {
             largeCellsClassList[i] = largeCells[i].classList;
         }
-
-        return { //maybe add cell and board class lists here?
+        return {
             xTurn,
             playedCellIndex,
             conquestMode: gameIndicatorsModule.getConquestMode(),
@@ -315,7 +307,5 @@ const gameboardModule = (() => {
             largeCellsClassList
         };
     }
-
-    return { getGameState }
 
 })();
