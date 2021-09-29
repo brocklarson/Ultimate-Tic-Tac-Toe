@@ -62,8 +62,7 @@ const gameParams = (() => {
     //Bind Events
     events.subscribe('themeChange', setTheme)
 
-    function setTheme(data = {}) {
-        theme = data;
+    function setTheme(theme = {}) {
         root.style.setProperty("--base-background-color", theme.baseBackgroundColor || "linear-gradient(#F2D9CB,#33AAA1)");
         root.style.setProperty("--button-color", theme.buttonColor || "#0E535A");
         root.style.setProperty("--button-text-color", theme.buttonTextColor || "white");
@@ -77,8 +76,6 @@ const gameParams = (() => {
         root.style.setProperty("--game-info-text-color", theme.gameInfoTextColor || "#0E535A");
         root.style.setProperty("--title-color", theme.titleColor || "black");
     };
-
-    //Init
     setTheme(storage.getLocalStorage('appTheme'));
 
 })();

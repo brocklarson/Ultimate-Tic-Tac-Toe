@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../icon.png">
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <script src="../js/pubsub.js" defer></script>
+    <script src="../js/save.js" defer></script>
+    <script src="../js/settings.js" defer></script>
+    <title>Ultimate Tic-Tac-Toe</title>
+</head>
+
+<body>
+    <div class="themes-container">
+        <div class="settings-container">
+            <div class="players-selector">
+                <div class="settings-arrow left player-count-arrows"></div>
+                <p id="playerCount">2 Players</p>
+                <div class="settings-arrow right player-count-arrows"></div>
+            </div>
+            <input type="text" id="playerOneName" placeholder="Player 1" autocomplete="off" maxlength="10">
+            <input type="text" id="playerTwoName" placeholder="Player 2" autocomplete="off" maxlength="10">
+            <div class="mode-selector">
+                <div class="settings-arrow left mode-arrows"></div>
+                <p id="modeSelector">Normal Mode</p>
+                <div class="settings-arrow right mode-arrows"></div>
+            </div>
+        </div>
+        <button class="back-button"><a href="themes.html">Themes</a></button>
+        <button class="back-button" id="backButton">Back</button>
+    </div>
+
+
+</body>
+
+</html>

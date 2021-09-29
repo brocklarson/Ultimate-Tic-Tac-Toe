@@ -29,8 +29,6 @@ body {
     --small-gameboards-color: black;
     --title-color: black;
     --winning-message-background-color: black;
-    /* v Themes changed in setTheme.js v */
-    /* ^ Themes changed in setTheme.js ^ */
 }
 
 a {
@@ -506,13 +504,10 @@ button:focus {
     overflow: scroll;
     scrollbar-width: none;
     width: var(--board-size);
-    /* Hides scroll bar in IE and Edge */
-    /* Hides scroll bar in Firefox */
 }
 
 .themes-button-container::-webkit-scrollbar {
     display: none;
-    /* Hides scroll bar in Chrome */
 }
 
 .themes-button-container button {
@@ -879,10 +874,8 @@ button:focus {
 
 .how-to-play-arrow {
     background: none;
-    border-width: 0 2px 2px 0;
-    border: solid var(--marker-color);
-    border-top: none;
-    border-left: none;
+    border-bottom: solid 3px var(--marker-color);
+    border-right: solid 3px var(--marker-color);
     display: inline-block;
     height: 2vh;
     justify-content: center;
@@ -902,6 +895,82 @@ button:focus {
 
 .hide {
     display: none;
+}
+
+
+/* SETTINGS */
+
+.settings-container {
+    -ms-overflow-style: none;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 90;
+    justify-content: space-evenly;
+    margin: 1.5vh 0;
+    overflow: scroll;
+    scrollbar-width: none;
+    width: var(--board-size);
+    font-family: var(--default-font-family);
+}
+
+.settings-container::-webkit-scrollbar {
+    display: none;
+}
+
+.settings-container p {
+    font-size: 2.5vw;
+    color: var(--marker-color);
+}
+
+.players-selector,
+.mode-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.settings-arrow {
+    background: none;
+    border-bottom: solid 3px var(--section-win-marker-color);
+    border-right: solid 3px var(--section-win-marker-color);
+    cursor: pointer;
+    display: inline-block;
+    height: 1.5vh;
+    justify-content: center;
+    padding: 1.5vh;
+    width: 1.5vh;
+}
+
+.settings-arrow.right {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    margin-right: 24px;
+}
+
+.settings-arrow.left {
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+    margin-left: 24px;
+}
+
+.settings-container input {
+    color: var(--marker-color);
+    width: 55%;
+    padding: 8px;
+    background: none;
+    outline: none;
+    border: solid 2px var(--section-win-marker-color);
+    -webkit-appearance: none;
+    border-radius: 5px;
+    font-size: 2vw;
+}
+
+.settings-container input.transparent {
+    color: transparent;
+    border-color: transparent;
+    box-shadow: none;
 }
 
 @media only screen and (max-aspect-ratio: 8/10) {

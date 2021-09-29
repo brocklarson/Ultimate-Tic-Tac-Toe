@@ -61,7 +61,7 @@ const gameIndicatorsModule = (() => {
     //Cache DOM
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicator = document.getElementById('playableSectionIndicatorText');
-    const conquestMode = storage.getLocalStorage('conquestMode');
+    const conquestMode = storage.getLocalStorage('conquestMode') || false;
 
     //Bind Events
     events.subscribe('playableSection', setplayableSectionIndicator);
