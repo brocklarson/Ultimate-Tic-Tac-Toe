@@ -17,17 +17,17 @@
 <body>
     <div class="themes-container">
         <div class="settings-container">
-            <div class="players-selector">
-                <div class="settings-arrow left player-count-arrows"></div>
-                <p id="playerCount">2 Players</p>
-                <div class="settings-arrow right player-count-arrows"></div>
+            <div>
+                <button id="normalMode" class="mode-selection">Normal</button>
+                <button id="conquestMode" class="mode-selection">Conquest</button>
             </div>
-            <input type="text" id="playerOneName" placeholder="Player 1" autocomplete="off" maxlength="10">
-            <input type="text" id="playerTwoName" placeholder="Player 2" autocomplete="off" maxlength="10">
-            <div class="mode-selector">
-                <div class="settings-arrow left mode-arrows"></div>
-                <p id="modeSelector">Normal Mode</p>
-                <div class="settings-arrow right mode-arrows"></div>
+            <div>
+                <button id="onePlayer" class="player-selection">1 Player</button>
+                <button id="twoPlayer" class="player-selection">2 Players</button>
+            </div>
+            <div>
+                <input type="text" placeholder="Player 1" id="playerOneName" autocomplete="off" maxlength="10">
+                <input type="text" placeholder="Player 2" id="playerTwoName" autocomplete="off" maxlength="10">
             </div>
         </div>
         <button class="back-button"><a href="themes.html">Themes</a></button>

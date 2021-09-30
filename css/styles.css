@@ -884,13 +884,13 @@ button:focus {
 }
 
 .how-to-play-arrow.right {
-    -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
 }
 
 .how-to-play-arrow.left {
-    -webkit-transform: rotate(135deg);
     transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
 }
 
 .hide {
@@ -906,9 +906,11 @@ button:focus {
     display: flex;
     flex-direction: column;
     flex-grow: 90;
+    font-family: var(--default-font-family);
     justify-content: space-evenly;
     margin: 1.5vh 0;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     scrollbar-width: none;
     width: var(--board-size);
     font-family: var(--default-font-family);
@@ -918,59 +920,48 @@ button:focus {
     display: none;
 }
 
-.settings-container p {
-    font-size: 2.5vw;
-    color: var(--marker-color);
-}
-
-.players-selector,
-.mode-selector {
+.settings-container div {
     display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
 }
 
-.settings-arrow {
-    background: none;
-    border-bottom: solid 3px var(--section-win-marker-color);
-    border-right: solid 3px var(--section-win-marker-color);
+.settings-container button {
+    background-color: var(--button-color);
+    border-radius: 1vh;
+    border: solid 1px var(--button-border-color);
+    color: var(--button-text-color);
     cursor: pointer;
-    display: inline-block;
-    height: 1.5vh;
-    justify-content: center;
-    padding: 1.5vh;
-    width: 1.5vh;
+    font-size: 3vh;
+    font-weight: bold;
+    margin: 0 12px;
+    padding: 8px 0;
+    width: 100%;
 }
 
-.settings-arrow.right {
-    -webkit-transform: rotate(-45deg);
-    transform: rotate(-45deg);
-    margin-right: 24px;
-}
-
-.settings-arrow.left {
-    -webkit-transform: rotate(135deg);
-    transform: rotate(135deg);
-    margin-left: 24px;
+.settings-container button.selected {
+    box-shadow: var(--button-hover-shadow);
 }
 
 .settings-container input {
+    background-color: transparent;
+    border: solid 2px var(--button-color);
     color: var(--marker-color);
-    width: 55%;
     padding: 8px;
-    background: none;
-    outline: none;
-    border: solid 2px var(--section-win-marker-color);
-    -webkit-appearance: none;
-    border-radius: 5px;
-    font-size: 2vw;
+    margin: 0 12px;
+    font-size: 3vh;
+    border-radius: 1vh;
+    width: 100%;
 }
 
-.settings-container input.transparent {
-    color: transparent;
-    border-color: transparent;
-    box-shadow: none;
+.settings-container input:focus {
+    outline: solid 2px var(--game-info-text-color);
+}
+
+.settings-container input:disabled {
+    opacity: 0.5;
 }
 
 @media only screen and (max-aspect-ratio: 8/10) {

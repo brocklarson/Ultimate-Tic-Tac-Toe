@@ -114,6 +114,7 @@ const gameplayModule = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
+    const playerCount = storage.getLocalStorage('playerCount') || 2;
     let xTurn;
     let playedCellIndex;
 
@@ -137,7 +138,7 @@ const gameplayModule = (() => {
     events.subscribe('restartGame', initializeGame);
 
     function initializeGame() {
-        const savedGameExists = storage.getLocalStorage('savedGameExists');
+        const savedGameExists = storage.getLocalStorage('savedGameExists') || false;
         if (savedGameExists) {
             const loadedGame = saveGameModule.loadGame();
             setBoard(loadedGame);
@@ -220,7 +221,10 @@ const gameplayModule = (() => {
             setPlayableSection(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
+
+        if (playerCount === 1) console.log('1 Player');
         events.publish('saveGame', getGameState());
+
     }
 
     function validLocation(cell, currentPlayer, largeCellIndex) {
@@ -308,4 +312,8 @@ const gameplayModule = (() => {
         };
     }
 
+})();
+
+const computerMove = (() => {
+    //Add logic for computers move and return a single function getCompMove
 })();
