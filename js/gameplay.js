@@ -114,7 +114,6 @@ const gameplayModule = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
-    const playerCount = storage.getLocalStorage('playerCount') || 2;
     let xTurn;
     let playedCellIndex;
 
@@ -199,11 +198,18 @@ const gameplayModule = (() => {
     }
 
     function handleClick(e) {
+        const playerCount = storage.getLocalStorage('playerCount') || 2;
         const cell = e.target;
+        const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
+        const playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
+
+        doMove(cell, largeCellIndex, playedCellIndex);
+        if (playerCount === 1) checkCompMove(playedCellIndex, largeCellIndex);
+    }
+
+    function doMove(cell, largeCellIndex, playedCellIndex) {
         const currentPlayer = xTurn ? 'X' : 'O';
         const currentPlayerWin = xTurn ? 'X-win' : 'O-win';
-        const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
-        playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
 
         if (!validLocation(cell, currentPlayer, largeCellIndex)) return;
         else placeMarker(cell, currentPlayer);
@@ -222,9 +228,12 @@ const gameplayModule = (() => {
             events.publish('playableSection', [playedCellIndex, false]);
         }
 
-        if (playerCount === 1) console.log('1 Player');
         events.publish('saveGame', getGameState());
+    }
 
+    function checkCompMove(playedCellIndex, largeCellIndex) {
+        const compMove = computerMove.getCompMove(playedCellIndex, largeCellIndex);
+        doMove(compMove.cell, compMove.largeCellIndex, compMove.playedCellIndex);
     }
 
     function validLocation(cell, currentPlayer, largeCellIndex) {
@@ -315,5 +324,34 @@ const gameplayModule = (() => {
 })();
 
 const computerMove = (() => {
-    //Add logic for computers move and return a single function getCompMove
+    //Cache DOM
+    const largeCells = document.querySelectorAll('.board-segment');
+    const smallCells = document.querySelectorAll('.cell');
+
+    function getCompMove(playedCellIndex, largeCellIndex) {
+
+        const validCells = getValidCells(playedCellIndex);
+        const randCell = validCells[Math.floor(Math.random() * validCells.length)];
+
+
+        const newCell = largeCells[playedCellIndex].children[randCell];
+        const newLargeCellIndex = playedCellIndex;
+        const newPlayedCellIndex = randCell;
+        return { cell: newCell, largeCellIndex: newLargeCellIndex, playedCellIndex: newPlayedCellIndex }
+    }
+
+    function getValidCells(playedCellIndex) {
+        //returns an array of numbers of empty cells in given gameboard section
+        return Array.from(largeCells[playedCellIndex].children)
+            .map(cell => {
+                if (!cell.classList.contains('X') && !cell.classList.contains('O')) {
+                    return Array.prototype.indexOf.call(cell.parentNode.children, cell);
+                }
+            })
+            .filter(index => {
+                return index !== undefined;
+            });
+    }
+
+    return { getCompMove }
 })();
