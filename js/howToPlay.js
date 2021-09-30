@@ -8,7 +8,7 @@ const howToPlay = (() => {
         "Get three boards in a row to win!",
         "This indicator on the top left of the board indicates which player's turn it is",
         "This indicator on the top right of the board indicates which board to play in",
-        "If you see this indicator, it means you are playing in 'Conquest Mode'"
+        "If you see this indicator, it means you are playing in 'Conquest Mode'!"
     ];
     const cellIndex = [
         [63, 4],

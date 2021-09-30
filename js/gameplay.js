@@ -329,14 +329,13 @@ const computerMove = (() => {
     const smallCells = document.querySelectorAll('.cell');
 
     function getCompMove(playedCellIndex, largeCellIndex) {
-
-        const validCells = getValidCells(playedCellIndex);
+        let validCells = getValidCells(playedCellIndex);
+        if (validCells.length === 0) validCells = getAnyCell();
         const randCell = validCells[Math.floor(Math.random() * validCells.length)];
 
-
-        const newCell = largeCells[playedCellIndex].children[randCell];
-        const newLargeCellIndex = playedCellIndex;
-        const newPlayedCellIndex = randCell;
+        const newCell = randCell;
+        const newLargeCellIndex = Array.prototype.indexOf.call(newCell.parentNode.parentNode.children, newCell.parentNode);;
+        const newPlayedCellIndex = Array.prototype.indexOf.call(newCell.parentNode.children, newCell);;
         return { cell: newCell, largeCellIndex: newLargeCellIndex, playedCellIndex: newPlayedCellIndex }
     }
 
@@ -345,8 +344,20 @@ const computerMove = (() => {
         return Array.from(largeCells[playedCellIndex].children)
             .map(cell => {
                 if (!cell.classList.contains('X') && !cell.classList.contains('O')) {
-                    return Array.prototype.indexOf.call(cell.parentNode.children, cell);
+                    return cell; //Array.prototype.indexOf.call(cell.parentNode.children, cell);
                 }
+            })
+            .filter(index => {
+                return index !== undefined;
+            });
+    }
+
+    function getAnyCell() {
+        return Array.from(smallCells)
+            .map(cell => {
+                if (!cell.classList.contains('X') && !cell.classList.contains('O')) {
+                    return cell;
+                };
             })
             .filter(index => {
                 return index !== undefined;
