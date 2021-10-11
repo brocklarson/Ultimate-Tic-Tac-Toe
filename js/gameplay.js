@@ -201,15 +201,16 @@ const gameplayModule = (() => {
         const playerCount = storage.getLocalStorage('playerCount') || 2;
         const cell = e.target;
         const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
-        const playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
 
-        doMove(cell, largeCellIndex, playedCellIndex);
-        if (playerCount === 1) checkCompMove(playedCellIndex, largeCellIndex);
+        doMove(cell, largeCellIndex);
+        if (playerCount === 1) checkCompMove(largeCellIndex);
+        events.publish('saveGame', getGameState());
     }
 
-    function doMove(cell, largeCellIndex, playedCellIndex) {
+    function doMove(cell, largeCellIndex) {
         const currentPlayer = xTurn ? 'X' : 'O';
         const currentPlayerWin = xTurn ? 'X-win' : 'O-win';
+        playedCellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
 
         if (!validLocation(cell, currentPlayer, largeCellIndex)) return;
         else placeMarker(cell, currentPlayer);
@@ -227,13 +228,12 @@ const gameplayModule = (() => {
             setPlayableSection(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
-
-        events.publish('saveGame', getGameState());
     }
 
-    function checkCompMove(playedCellIndex, largeCellIndex) {
+    function checkCompMove(largeCellIndex) {
         const compMove = computerMove.getCompMove(playedCellIndex, largeCellIndex);
-        doMove(compMove.cell, compMove.largeCellIndex, compMove.playedCellIndex);
+        playedCellIndex = compMove.playedCellIndex;
+        doMove(compMove.cell, compMove.largeCellIndex);
     }
 
     function validLocation(cell, currentPlayer, largeCellIndex) {
@@ -324,18 +324,42 @@ const gameplayModule = (() => {
 })();
 
 const computerMove = (() => {
+    const WINNING_COMBINATIONS = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
     //Cache DOM
     const largeCells = document.querySelectorAll('.board-segment');
     const smallCells = document.querySelectorAll('.cell');
 
     function getCompMove(playedCellIndex, largeCellIndex) {
+        let cellScore = [];
         let validCells = getValidCells(playedCellIndex);
         if (validCells.length === 0) validCells = getAnyCell();
-        const randCell = validCells[Math.floor(Math.random() * validCells.length)];
 
-        const newCell = randCell;
-        const newLargeCellIndex = Array.prototype.indexOf.call(newCell.parentNode.parentNode.children, newCell.parentNode);;
-        const newPlayedCellIndex = Array.prototype.indexOf.call(newCell.parentNode.children, newCell);;
+        let option = 0;
+        validCells.forEach(cell => {
+            let cellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
+            cellScore.push({
+                option: option,
+                score: getCellScore(cellIndex, playedCellIndex);
+            });
+            option++;
+        });
+        cellScore.sort((a, b) => {
+            return a.score > b.score ? -1 : 1;
+        });
+        console.log(cellScore); ////
+
+        const newCell = validCells[cellScore[0].option];
+        const newLargeCellIndex = Array.prototype.indexOf.call(newCell.parentNode.parentNode.children, newCell.parentNode);
+        const newPlayedCellIndex = Array.prototype.indexOf.call(newCell.parentNode.children, newCell);
         return { cell: newCell, largeCellIndex: newLargeCellIndex, playedCellIndex: newPlayedCellIndex }
     }
 
@@ -362,6 +386,40 @@ const computerMove = (() => {
             .filter(index => {
                 return index !== undefined;
             });
+    }
+
+    function getCellScore(cellIndex, playedCellIndex) {
+        let score = 0;
+        score -= twoInARow(cellIndex, 'X');
+        score -= twoInARow(cellIndex, 'O');
+        // if (winCurrentSection(playedCellIndex, 'O')) score++;
+        return score;
+    }
+
+    function twoInARow(cellIndex, opponent) {
+        let counter = 0;
+        WINNING_COMBINATIONS.forEach(combination => {
+            //return array of how many in each combination are X's (or O's) and Empty
+            const cellChecker = combination.reduce((total, index) => {
+                if (largeCells[cellIndex].children[index].classList.contains(opponent)) total[0]++;
+                if (!largeCells[cellIndex].children[index].classList.contains('X') &&
+                    !largeCells[cellIndex].children[index].classList.contains('O')) total[1]++;
+                return total;
+            }, [0, 0]);
+            if (cellChecker[0] === 2 && cellChecker[1] === 1) counter++;
+        });
+        return counter;
+    }
+
+    function winCurrentSection(cellIndex, compMarker) {
+        WINNING_COMBINATIONS.forEach(combination => {
+            const cellChecker = combination.reduce((total, index) => {
+                if (largeCells[cellIndex].children[index].classList.contains(compMarker)) total[0]++;
+                if (!largeCells[cellIndex].children[index].classList.contains('X') &&
+                    !largeCells[cellIndex].children[index].classList.contains('O')) total[1]++;
+                return total;
+            }, [0, 0]);
+        });
     }
 
     return { getCompMove }
