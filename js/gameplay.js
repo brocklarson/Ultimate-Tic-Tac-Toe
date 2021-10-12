@@ -334,6 +334,7 @@ const computerMove = (() => {
         [0, 4, 8],
         [2, 4, 6]
     ];
+    const conquestMode = storage.getLocalStorage('conquestMode') || false;
     //Cache DOM
     const largeCells = document.querySelectorAll('.board-segment');
     const smallCells = document.querySelectorAll('.cell');
@@ -386,11 +387,13 @@ const computerMove = (() => {
 
     function getCellScore(cellIndex, playedCellIndex) {
         let score = 0;
-        score -= twoInARow(cellIndex, 'X');
-        score -= twoInARow(cellIndex, 'O');
-        if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //ignore this if section is already won and not conquest mode
-        //if section sent to would be already won, plus score
-        //if section sent to would be full, minus score
+        score -= twoInARow(cellIndex, 'X'); //Don't send to section where X can win
+        score -= twoInARow(cellIndex, 'O'); //Don't send to section where X could block O win
+        if (!conquestMode) {
+            if (sectionWon(cellIndex)) score++; ////Add in logic for conquest mode to check if won by X or O
+        }
+        if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //Play in cell if it could win ////add logic ignore this if section is already won and not conquest mode
+        if (fullSection(cellIndex)) score -= 2; // Don't send to already full section
 
         return score;
     }
@@ -413,6 +416,7 @@ const computerMove = (() => {
     function winCurrentSection(playedCellIndex, cellIndex, compMarker) {
         let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
+            //return array of how many in each combination are O's and Empty
             if (combination.includes(cellIndex)) {
                 const cellChecker = combination.reduce((total, index) => {
                     if (largeCells[playedCellIndex].children[index].classList.contains(compMarker)) total[0]++;
@@ -424,6 +428,18 @@ const computerMove = (() => {
             }
         });
         if (counter > 0) return true;
+    }
+
+    function fullSection(cellIndex) {
+        if (isNaN(cellIndex)) return true;
+        return Array.from(largeCells[cellIndex].children).every(child => {
+            return child.classList.contains('X') || child.classList.contains('O');
+        });
+    }
+
+    function sectionWon(cellIndex) {
+        return (largeCells[cellIndex].classList.contains('X-win') ||
+            largeCells[cellIndex].classList.contains('O-win'));
     }
 
     function chooseBestScore(validCells, cellScore) {
