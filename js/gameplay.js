@@ -348,16 +348,12 @@ const computerMove = (() => {
             let cellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
             cellScore.push({
                 option: option,
-                score: getCellScore(cellIndex, playedCellIndex);
+                score: getCellScore(cellIndex, playedCellIndex)
             });
             option++;
         });
-        cellScore.sort((a, b) => {
-            return a.score > b.score ? -1 : 1;
-        });
-        console.log(cellScore); ////
 
-        const newCell = validCells[cellScore[0].option];
+        const newCell = chooseBestScore(validCells, cellScore);
         const newLargeCellIndex = Array.prototype.indexOf.call(newCell.parentNode.parentNode.children, newCell.parentNode);
         const newPlayedCellIndex = Array.prototype.indexOf.call(newCell.parentNode.children, newCell);
         return { cell: newCell, largeCellIndex: newLargeCellIndex, playedCellIndex: newPlayedCellIndex }
@@ -392,7 +388,10 @@ const computerMove = (() => {
         let score = 0;
         score -= twoInARow(cellIndex, 'X');
         score -= twoInARow(cellIndex, 'O');
-        // if (winCurrentSection(playedCellIndex, 'O')) score++;
+        if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //ignore this if section is already won and not conquest mode
+        //if section sent to would be already won, plus score
+        //if section sent to would be full, minus score
+
         return score;
     }
 
@@ -411,15 +410,35 @@ const computerMove = (() => {
         return counter;
     }
 
-    function winCurrentSection(cellIndex, compMarker) {
+    function winCurrentSection(playedCellIndex, cellIndex, compMarker) {
+        let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
-            const cellChecker = combination.reduce((total, index) => {
-                if (largeCells[cellIndex].children[index].classList.contains(compMarker)) total[0]++;
-                if (!largeCells[cellIndex].children[index].classList.contains('X') &&
-                    !largeCells[cellIndex].children[index].classList.contains('O')) total[1]++;
-                return total;
-            }, [0, 0]);
+            if (combination.includes(cellIndex)) {
+                const cellChecker = combination.reduce((total, index) => {
+                    if (largeCells[playedCellIndex].children[index].classList.contains(compMarker)) total[0]++;
+                    if (!largeCells[playedCellIndex].children[index].classList.contains('X') &&
+                        !largeCells[playedCellIndex].children[index].classList.contains('O')) total[1]++;
+                    return total;
+                }, [0, 0]);
+                if (cellChecker[0] === 2 && cellChecker[1] === 1) counter++;
+            }
         });
+        if (counter > 0) return true;
+    }
+
+    function chooseBestScore(validCells, cellScore) {
+        cellScore.sort((a, b) => {
+            return a.score > b.score ? -1 : 1;
+        });
+        console.log(cellScore); ////
+        let sameScores = cellScore.filter(cell => cell.score === cellScore[0].score).length;
+        if (sameScores !== 1) return resolveTies(sameScores, validCells, cellScore);
+        else return validCells[cellScore[0].option];
+    }
+
+    function resolveTies(sameScores, validCells, cellScore) {
+        const rand = Math.floor(Math.random() * sameScores);
+        return validCells[cellScore[rand].option];
     }
 
     return { getCompMove }
