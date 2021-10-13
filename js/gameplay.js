@@ -51,6 +51,7 @@ const gameEndModule = (() => {
 
     function restartGame() {
         winningMessage.classList.remove('show');
+        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         events.publish('restartGame', '');
     }
 
@@ -158,6 +159,7 @@ const gameplayModule = (() => {
                 cell.removeEventListener('click', handleClick);
                 cell.addEventListener('click', handleClick);
             });
+            sentToFullSection = true;
         } else {
             xTurn = loadedGame.xTurn;
             playedCellIndex = loadedGame.playedCellIndex;
@@ -203,8 +205,13 @@ const gameplayModule = (() => {
         const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
 
         doMove(cell, largeCellIndex);
-        if (playerCount === 1) checkCompMove(largeCellIndex);
         events.publish('saveGame', getGameState());
+        if (playerCount === 1) {
+            setTimeout(function() {
+                checkCompMove(largeCellIndex);
+                events.publish('saveGame', getGameState());
+            }, 300);
+        }
     }
 
     function doMove(cell, largeCellIndex) {
