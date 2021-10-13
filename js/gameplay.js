@@ -231,7 +231,7 @@ const gameplayModule = (() => {
     }
 
     function checkCompMove(largeCellIndex) {
-        const compMove = computerMove.getCompMove(playedCellIndex, largeCellIndex);
+        const compMove = computerMove.getCompMove(playedCellIndex);
         playedCellIndex = compMove.playedCellIndex;
         doMove(compMove.cell, compMove.largeCellIndex);
     }
@@ -339,7 +339,7 @@ const computerMove = (() => {
     const largeCells = document.querySelectorAll('.board-segment');
     const smallCells = document.querySelectorAll('.cell');
 
-    function getCompMove(playedCellIndex, largeCellIndex) {
+    function getCompMove(playedCellIndex) {
         let cellScore = [];
         let validCells = getValidCells(playedCellIndex);
         if (validCells.length === 0) validCells = getAnyCell();
@@ -387,23 +387,40 @@ const computerMove = (() => {
 
     function getCellScore(cellIndex, playedCellIndex) {
         let score = 0;
-        score -= twoInARow(cellIndex, 'X'); //Don't send to section where X can win
-        score -= twoInARow(cellIndex, 'O'); //Don't send to section where X could block O win
-        if (!conquestMode) {
-            if (sectionWon(cellIndex)) score++; ////Add in logic for conquest mode to check if won by X or O
+        if (conquestMode || !sectionWon(cellIndex, ['X-win', 'O-win'])) {
+            score -= twoInARow(cellIndex, 'X'); //Don't send to section where X can win
+            score -= twoInARow(cellIndex, 'O'); //Don't send to section where X could block O win
         }
-        if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //Play in cell if it could win ////add logic ignore this if section is already won and not conquest mode
+        if (!conquestMode) {
+            if (sectionWon(cellIndex, ['X-win', 'O-win'])) score++; //Send to already won sections
+        }
+        if (conquestMode || !sectionWon(playedCellIndex, ['X-win', 'O-win'])) {
+            if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //Play in cell if it could win section
+            if (winCurrentSection(playedCellIndex, cellIndex, 'X')) score++; //Play in cell if it blocks opponent from winning section
+        }
         if (fullSection(cellIndex)) score -= 2; // Don't send to already full section
 
+        if (winGame(cellIndex, 'X-win')) { //Don't send to section where player can win
+            score -= 2;
+            if (twoInARow(cellIndex, 'X') > 0) score -= 100;
+        }
+        if (winGame(cellIndex, 'O-win')) { //Don't send to sesction where player can block comp win
+            score -= 2;
+            if (twoInARow(cellIndex, 'O') > 0) score -= 100;
+        }
+        if (winGame(playedCellIndex, 'O-win')) {
+            if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 9999; //Absolutely win game if possible
+            if (winCurrentSection(playedCellIndex, cellIndex, 'X')) score += 100; //Block opponent win game option
+        }
         return score;
     }
 
-    function twoInARow(cellIndex, opponent) {
+    function twoInARow(cellIndex, marker) {
         let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
             //return array of how many in each combination are X's (or O's) and Empty
             const cellChecker = combination.reduce((total, index) => {
-                if (largeCells[cellIndex].children[index].classList.contains(opponent)) total[0]++;
+                if (largeCells[cellIndex].children[index].classList.contains(marker)) total[0]++;
                 if (!largeCells[cellIndex].children[index].classList.contains('X') &&
                     !largeCells[cellIndex].children[index].classList.contains('O')) total[1]++;
                 return total;
@@ -437,9 +454,25 @@ const computerMove = (() => {
         });
     }
 
-    function sectionWon(cellIndex) {
-        return (largeCells[cellIndex].classList.contains('X-win') ||
-            largeCells[cellIndex].classList.contains('O-win'));
+    function sectionWon(index, classes) {
+        return classes.some(element => largeCells[index].classList.contains(element));
+    }
+
+    function winGame(section, marker) {
+        let counter = 0;
+        WINNING_COMBINATIONS.forEach(combination => {
+            //return array of how many in each combination are O's and Empty
+            if (combination.includes(section)) {
+                const cellChecker = combination.reduce((total, index) => {
+                    if (largeCells[index].classList.contains(marker)) total[0]++;
+                    if (!largeCells[index].classList.contains('X-win') &&
+                        !largeCells[index].classList.contains('O-win')) total[1]++;
+                    return total;
+                }, [0, 0]);
+                if (cellChecker[0] === 2 && cellChecker[1] === 1) counter++;
+            }
+        });
+        if (counter > 0 && !sectionWon(section, ['X-win', 'O-win'])) return true;
     }
 
     function chooseBestScore(validCells, cellScore) {
