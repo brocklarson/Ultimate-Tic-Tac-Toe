@@ -50,6 +50,26 @@ button:focus {
 
 /*GAMEPLAY BOARD*/
 
+.home-button {
+    background-color: var(--button-color);
+    border-radius: 1vh;
+    border: solid 1px var(--button-border-color);
+    color: var(--button-text-color);
+    cursor: pointer;
+    font-size: 5vh;
+    height: 6vh;
+    width: 6vh;
+}
+
+.home-button a {
+    padding: 0;
+    margin: 0;
+}
+
+.home-button:hover {
+    box-shadow: var(--button-hover-shadow);
+}
+
 .container {
     align-content: space-around;
     align-items: center;
@@ -65,6 +85,7 @@ button:focus {
 }
 
 .in-game-info-container {
+    flex-wrap: wrap;
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -74,21 +95,33 @@ button:focus {
     width: var(--board-size);
 }
 
-.in-game-info-container button {
-    background-color: var(--button-color);
-    border-radius: 1vh;
-    border: solid 1px var(--button-border-color);
-    color: var(--button-text-color);
-    cursor: pointer;
+.game-score {
     font-family: var(--default-font-family);
-    font-size: 2.5vh;
-    font-weight: bold;
-    height: 6vh;
-    width: 22.5%;
+    color: var(--game-info-text-color);
+    font-size: 3vh;
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 100;
+    width: 100%;
+    letter-spacing: 0.1em;
+    margin: 0;
+    padding: 4px 0;
 }
 
-.in-game-info-container button:hover {
-    box-shadow: var(--button-hover-shadow);
+.indicator-left-side {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 75;
+    justify-content: space-around;
+}
+
+.indicator-right-side {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 25;
+    justify-content: space-around;
 }
 
 .turn-indicator {
@@ -155,11 +188,11 @@ button:focus {
 }
 
 .conquest-mode-indicator {
-    display: none;
+    opacity: 0;
 }
 
 .conquest-mode-indicator.show {
-    display: block;
+    opacity: 1;
 }
 
 .board-whole {
@@ -977,52 +1010,8 @@ button:focus {
     .in-game-info-container {
         height: 20vh;
     }
-    .in-game-info-container button {
-        width: 40vw;
-    }
-    #saveButton {
-        position: absolute;
-        top: 25%;
-        left: 25%;
-        transform: translate(-50%, -50%);
-    }
-    #mainMenuButton {
-        position: absolute;
-        top: 25%;
-        right: 25%;
-        transform: translate(50%, -50%);
-    }
-    .board-whole {
-        height: 80vh;
-    }
-    .board-segment {
-        padding: 1.5vw;
-    }
     .turn-indicator {
-        position: absolute;
-        bottom: 25%;
-        left: 25%;
         width: 6vh;
-        transform: translate(-50%, 50%);
-    }
-    .turn-indicator.X::before,
-    .turn-indicator.X::after {
-        height: calc(var(--marker-size) * 1);
-        width: calc(var(--marker-size) * 0.2);
-    }
-    .turn-indicator.O::before {
-        border-width: calc(var(--marker-size)*0.2);
-        height: calc(var(--marker-size) * 0.95);
-        width: calc(var(--marker-size) * 0.95);
-    }
-    .playable-section-indicator {
-        position: absolute;
-        bottom: 25%;
-        right: 25%;
-        transform: translate(50%, 50%);
-    }
-    .playable-section-indicator p {
-        font-size: 5vw;
     }
     .winning-message {
         font-size: 13vw;
@@ -1107,51 +1096,43 @@ button:focus {
     /*GAMEBOARD SCREEN*/
     .in-game-info-container {
         height: 33vh;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    .game-score {
+        flex-grow: 0;
+        letter-spacing: 0.05em;
+    }
+    .indicator-left-side {
+        flex-grow: 0;
+        width: 100%;
+    }
+    .indicator-right-side {
+        flex-grow: 0;
+        left: 0;
+        margin: 8px 0 0 16px;
+        position: absolute;
+        top: 0;
     }
     .how-to-play-game-indicators,
     .board-whole {
         height: 67vh;
     }
-    .in-game-info-container button {
-        width: 40vw;
-        font-size: 5vw;
-    }
-    #saveButton {
-        position: absolute;
-        top: 25%;
-        left: 25%;
-        transform: translate(-50%, -50%);
-    }
-    #mainMenuButton {
-        position: absolute;
-        top: 25%;
-        right: 25%;
-        transform: translate(50%, -50%);
-    }
-    .turn-indicator {
-        position: absolute;
-        bottom: 25%;
-        left: 25%;
-        transform: translate(-50%, 50%);
-    }
-    .playable-section-indicator {
-        position: absolute;
-        bottom: 25%;
-        right: 25%;
-        transform: translate(50%, 50%);
+    .home-button {
+        font-size: 8vw;
     }
     .turn-indicator.X::before,
     .turn-indicator.X::after {
-        height: calc(var(--marker-size) * 1.5);
-        width: calc(var(--marker-size) * 0.25);
+        height: calc(var(--marker-size) * 1.2);
+        width: calc(var(--marker-size) * 0.22);
     }
     .turn-indicator.O::before {
-        border-width: calc(var(--marker-size)*0.25);
-        height: calc(var(--marker-size) * 1.2);
-        width: calc(var(--marker-size) * 1.2);
+        border-width: calc(var(--marker-size)*0.22);
+        height: calc(var(--marker-size) * 1.1);
+        width: calc(var(--marker-size) * 1.1);
     }
     .playable-section-indicator p {
-        font-size: 7vw;
+        font-size: 5vw;
     }
     /*HOW TO PLAY SCREEN*/
     .how-to-play-text-container {

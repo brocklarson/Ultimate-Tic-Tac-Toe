@@ -7,7 +7,7 @@ const howToPlay = (() => {
         "Once a board has been won, the outcome cannot be changed even if the other player later gets a tic-tac-toe in the same board<br><br>However, in 'Conquest Mode', getting a tic-tac-toe in an already won board will cause the board to be overtaken.",
         "Get three boards in a row to win!",
         "This indicator on the top left of the board indicates which player's turn it is",
-        "This indicator on the top right of the board indicates which board to play in",
+        "This indicator indicates which board you can play in",
         "If you see this indicator, it means you are playing in 'Conquest Mode'!"
     ];
     const cellIndex = [

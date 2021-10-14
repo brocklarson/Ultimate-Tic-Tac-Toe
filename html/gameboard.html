@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../icon.png">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 
     <script src="../js/pubsub.js" defer></script>
     <script src="../js/save.js" defer></script>
@@ -17,12 +18,23 @@
 <body>
     <div class="container">
         <div class="in-game-info-container" id="inGameInfoContainer">
-            <div class="turn-indicator" id="turnIndicator"></div>
-            <button id="saveButton"><a>Save Game</a></button>
-            <p class='conquest-mode-indicator' id='conquestModeIndicator'></p>
-            <button id="mainMenuButton"><a href="../index.html">Main Menu</a></button>
-            <div class="playable-section-indicator" id="playableSectionIndicator">
-                <p id="playableSectionIndicatorText"></p>
+            <div class="game-score">
+                <p>
+                    <span id="playerOneName">Player 1</span> :
+                    <span id="playerOneScore">0</span> -
+                    <span id="playerTwoScore">0</span> :
+                    <span id="playerTwoName">Player 2</span>
+                </p>
+            </div>
+            <div class="indicator-left-side">
+                <div class="turn-indicator" id="turnIndicator"></div>
+                <div class="playable-section-indicator" id="playableSectionIndicator">
+                    <p id="playableSectionIndicatorText"></p>
+                </div>
+                <p class='conquest-mode-indicator' id='conquestModeIndicator'></p>
+            </div>
+            <div class="indicator-right-side">
+                <span class="material-icons-outlined home-button" id="homeButton"><a href="../index.html">home</a></span>
             </div>
         </div>
 
