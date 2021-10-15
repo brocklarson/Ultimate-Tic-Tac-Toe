@@ -58,7 +58,7 @@ const settingsModule = (() => {
         let playerOne = playerNames[0].value;
         if (playerOne === '') playerOne = 'Player 1';
         let playerTwo = playerNames[1].value;
-        if (getPlayerCount() === 1) playerTwo = 'Mr. Robot';
+        if (getPlayerCount() === 1) playerTwo = 'Computer';
         else if (playerTwo === '') playerTwo = 'Player 2';
 
         return { playerOne, playerTwo }
@@ -70,7 +70,7 @@ const settingsModule = (() => {
 
         if (playerOneName === 'Player 1') playerNames[0].value = '';
         else playerNames[0].value = playerOneName;
-        if (playerTwoName === 'Player 2' || playerTwoName === 'Mr. Robot') playerNames[1].value = '';
+        if (playerTwoName === 'Player 2' || playerTwoName === 'Computer') playerNames[1].value = '';
         else playerNames[1].value = playerTwoName;
     }
 

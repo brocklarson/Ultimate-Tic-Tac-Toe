@@ -19,12 +19,9 @@
     <div class="container">
         <div class="in-game-info-container" id="inGameInfoContainer">
             <div class="game-score">
-                <p>
-                    <span id="playerOneName">Player 1</span> :
-                    <span id="playerOneScore">0</span> -
-                    <span id="playerTwoScore">0</span> :
-                    <span id="playerTwoName">Player 2</span>
-                </p>
+                <p id="playerOneName" class="player-one">Player 1</p>
+                <p class="score">&nbsp;:&nbsp;<span id="playerOneScore">0</span>&nbsp;-&nbsp;<span id="playerTwoScore">0</span>&nbsp;:&nbsp;</p>
+                <p id="playerTwoName" class="player-two">Player 2</p>
             </div>
             <div class="indicator-left-side">
                 <div class="turn-indicator" id="turnIndicator"></div>
@@ -43,7 +40,7 @@
 
     <div class="winning-message" id="winningMessage">
         <div data-winning-message-text></div>
-        <button id="restartButton"><a>Restart</a></button>
+        <button id="restartButton"><a>Rematch</a></button>
         <button><a href="../index.html">Main Menu</a></button>
     </div>
 

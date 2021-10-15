@@ -8,7 +8,7 @@ const mainMenu = (() => {
     if (storage.getLocalStorage('savedGameExists')) continueGameButton.classList.add('show');
 
     function startNewGame() {
-        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
+        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList', 'playerOneScore', 'playerTwoScore']);
         window.location.href = 'html/gameboard.html';
     }
 

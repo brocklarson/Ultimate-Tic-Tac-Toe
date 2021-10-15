@@ -1,3 +1,15 @@
+//PLAYER FACTORY   
+const Player = (name, score = 0) => {
+    const getName = () => name;
+    const getScore = () => score;
+    const win = () => score++;
+
+    return { getName, getScore, win }
+};
+
+const playerOne = Player(storage.getLocalStorage('playerOneName') || 'Player 1', storage.getLocalStorage('playerOneScore'));
+const playerTwo = Player(storage.getLocalStorage('playerTwoName') || 'Player 2', storage.getLocalStorage('playerTwoScore'));
+
 //SAVE GAME MODULE
 const saveGameModule = (() => {
     events.subscribe('saveGame', saveGame)
@@ -42,8 +54,16 @@ const gameEndModule = (() => {
         const currentPlayer = data[1];
 
         if (draw) winningMessageTextElement.innerText = 'Draw';
-        else winningMessageTextElement.innerText = `${currentPlayer} Wins!`;
-
+        else {
+            winningMessageTextElement.innerText = `${currentPlayer} Wins!`;
+            if (currentPlayer === 'X') playerOne.win();
+            else playerTwo.win();
+            gameIndicatorsModule.setScores();
+            events.publish('variableChange', [
+                [playerOne.getScore(), 'playerOneScore'],
+                [playerTwo.getScore(), 'playerTwoScore'],
+            ]);
+        }
         winningMessage.classList.add('show');
         events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         restartButton.addEventListener('click', restartGame);
@@ -63,15 +83,33 @@ const gameIndicatorsModule = (() => {
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicator = document.getElementById('playableSectionIndicatorText');
     const conquestMode = storage.getLocalStorage('conquestMode') || false;
+    const playerOneName = document.getElementById('playerOneName');
+    const playerTwoName = document.getElementById('playerTwoName');
 
     //Bind Events
     events.subscribe('playableSection', setplayableSectionIndicator);
     events.subscribe('turnIndicator', setPlayersTurn);
 
+    function initialize() {
+        setConquestMode();
+        setPlayerNames();
+        setScores();
+    }
+    initialize();
 
-    (function setConquestMode() {
+    function setConquestMode() {
         if (conquestMode) document.getElementById('conquestModeIndicator').classList.add('show');
-    })();
+    }
+
+    function setPlayerNames() {
+        playerOneName.innerText = playerOne.getName();
+        playerTwoName.innerText = playerTwo.getName();
+    }
+
+    function setScores() {
+        document.getElementById('playerOneScore').innerText = playerOne.getScore();
+        document.getElementById('playerTwoScore').innerText = playerTwo.getScore();
+    }
 
     function getConquestMode() {
         return conquestMode;
@@ -98,9 +136,17 @@ const gameIndicatorsModule = (() => {
         playersTurn = (xTurn === true) ? 'X' : 'O';
         turnIndicator.classList.remove('X', 'O');
         turnIndicator.classList.add(playersTurn);
+
+        if (xTurn) {
+            playerTwoName.classList.remove('turn');
+            playerOneName.classList.add('turn');
+        } else {
+            playerOneName.classList.remove('turn');
+            playerTwoName.classList.add('turn');
+        }
     }
 
-    return { getConquestMode }
+    return { getConquestMode, setScores }
 })();
 
 //GAMEPLAY MODULE
@@ -204,7 +250,8 @@ const gameplayModule = (() => {
         const cell = e.target;
         const largeCellIndex = Array.prototype.indexOf.call(cell.parentNode.parentNode.children, cell.parentNode);
 
-        doMove(cell, largeCellIndex);
+        if (playerCount === 2 || xTurn) doMove(cell, largeCellIndex);
+
         events.publish('saveGame', getGameState());
         if (playerCount === 1) {
             setTimeout(function() {
@@ -486,7 +533,6 @@ const computerMove = (() => {
         cellScore.sort((a, b) => {
             return a.score > b.score ? -1 : 1;
         });
-        console.log(cellScore); ////
         let sameScores = cellScore.filter(cell => cell.score === cellScore[0].score).length;
         if (sameScores !== 1) return resolveTies(sameScores, validCells, cellScore);
         else return validCells[cellScore[0].option];
