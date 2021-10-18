@@ -1014,7 +1014,7 @@ button:focus {
 
 .settings-container input {
     background-color: transparent;
-    border: solid 2px var(--button-color);
+    border: solid 2px var(--button-border-color);
     color: var(--marker-color);
     padding: 8px;
     margin: 0 12px;
