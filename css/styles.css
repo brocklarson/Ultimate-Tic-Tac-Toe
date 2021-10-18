@@ -13,7 +13,7 @@ body {
 :root {
     --base-background-color: linear-gradient(#F2D9CB, #33AAA1);
     --board-size: 80vh;
-    --button-border-color: none;
+    --button-border-color: #0E535A;
     --button-color: #0E535A;
     --button-hover-shadow: 0px 0px 10px black inset;
     --button-text-color: white;
