@@ -17,6 +17,18 @@ const howToPlay = (() => {
     ]
     let counter = 0;
 
+    (function createBoard() {
+        const gameBoard = document.getElementById('howToPlayBoardWhole');
+        for (i = 0; i < 9; i++) {
+            let boardSegment = document.createElement('div');
+            gameBoard.appendChild(boardSegment).className = 'how-to-play-board-segment';
+            for (j = 0; j < 9; j++) {
+                let cell = document.createElement('div');
+                boardSegment.appendChild(cell).className = 'how-to-play-cell';
+            }
+        }
+    })();
+
     //Cache DOM
     const leftArrow = document.getElementById('howToPlayLeftArrow');
     const rightArrow = document.getElementById('howToPlayRightArrow');

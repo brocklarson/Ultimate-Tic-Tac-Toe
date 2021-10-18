@@ -1014,12 +1014,12 @@ button:focus {
 
 .settings-container input {
     background-color: transparent;
+    border-radius: 1vh;
     border: solid 2px var(--button-border-color);
     color: var(--marker-color);
-    padding: 8px;
-    margin: 0 12px;
     font-size: 3vh;
-    border-radius: 1vh;
+    margin: 0 12px;
+    padding: 8px;
     width: 100%;
 }
 

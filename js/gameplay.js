@@ -6,15 +6,14 @@ const Player = (name, score = 0) => {
 
     return { getName, getScore, win }
 };
-
 const playerOne = Player(storage.getLocalStorage('playerOneName') || 'Player 1', storage.getLocalStorage('playerOneScore'));
 const playerTwo = Player(storage.getLocalStorage('playerTwoName') || 'Player 2', storage.getLocalStorage('playerTwoScore'));
 
 //SAVE GAME MODULE
 const saveGameModule = (() => {
-    events.subscribe('saveGame', saveGame)
+    events.subscribe('saveGame', _saveGame)
 
-    function saveGame(gameState) {
+    function _saveGame(gameState) {
         events.publish('variableChange', [
             [true, 'savedGameExists'],
             [gameState.conquestMode, 'conquestMode'],
@@ -50,15 +49,15 @@ const gameEndModule = (() => {
     events.subscribe('endGame', endGame);
 
     function endGame(data) {
-        const draw = data[0];
+        const isDraw = data[0];
         const currentPlayer = data[1];
 
-        if (draw) winningMessageTextElement.innerText = 'Draw';
+        if (isDraw) winningMessageTextElement.innerText = 'Draw';
         else {
             winningMessageTextElement.innerText = `${currentPlayer} Wins!`;
             if (currentPlayer === 'X') playerOne.win();
             else playerTwo.win();
-            gameIndicatorsModule.setScores();
+            gameHUDModule.setScores();
             events.publish('variableChange', [
                 [playerOne.getScore(), 'playerOneScore'],
                 [playerTwo.getScore(), 'playerTwoScore'],
@@ -71,14 +70,13 @@ const gameEndModule = (() => {
 
     function restartGame() {
         winningMessage.classList.remove('show');
-        events.publish('removeStorage', ['savedGameExists', 'xTurn', 'playableSection', 'smallCellsClassList', 'largeCellsClassList']);
         events.publish('restartGame', '');
     }
 
 })();
 
-//GAME INDICATORS MODULE
-const gameIndicatorsModule = (() => {
+//GAME HUD MODULE
+const gameHUDModule = (() => {
     //Cache DOM
     const turnIndicator = document.getElementById('turnIndicator');
     const playableSectionIndicator = document.getElementById('playableSectionIndicatorText');
@@ -87,21 +85,22 @@ const gameIndicatorsModule = (() => {
     const playerTwoName = document.getElementById('playerTwoName');
 
     //Bind Events
-    events.subscribe('playableSection', setplayableSectionIndicator);
-    events.subscribe('turnIndicator', setPlayersTurn);
+    events.subscribe('playableSection', _setplayableSectionIndicator);
+    events.subscribe('turnIndicator', _setPlayersTurn);
 
-    function initialize() {
-        setConquestMode();
-        setPlayerNames();
+    function _initialize() {
+        _setConquestMode();
+        _setPlayerNames();
+        _setPlayersTurn(storage.getLocalStorage('xTurn'));
         setScores();
     }
-    initialize();
+    _initialize();
 
-    function setConquestMode() {
+    function _setConquestMode() {
         if (conquestMode) document.getElementById('conquestModeIndicator').classList.add('show');
     }
 
-    function setPlayerNames() {
+    function _setPlayerNames() {
         playerOneName.innerText = playerOne.getName();
         playerTwoName.innerText = playerTwo.getName();
     }
@@ -115,7 +114,7 @@ const gameIndicatorsModule = (() => {
         return conquestMode;
     }
 
-    function setplayableSectionIndicator(data) {
+    function _setplayableSectionIndicator(data) {
         const playedCellIndex = data[0];
         const sentToFullSection = data[1];
 
@@ -132,7 +131,7 @@ const gameIndicatorsModule = (() => {
         else playableSectionIndicator.innerText = 'Play\nAnywhere';
     }
 
-    function setPlayersTurn(xTurn) {
+    function _setPlayersTurn(xTurn) {
         playersTurn = (xTurn === true) ? 'X' : 'O';
         turnIndicator.classList.remove('X', 'O');
         turnIndicator.classList.add(playersTurn);
@@ -198,7 +197,7 @@ const gameplayModule = (() => {
             xTurn = true;
             largeCells.forEach(section => {
                 section.classList.remove('X', 'O', 'X-win', 'O-win');
-                section.classList.add('X'); //Allows hover states
+                section.classList.add('X'); //Allows hover over playable cells
             });
             smallCells.forEach(cell => {
                 cell.classList.remove('X', 'O');
@@ -214,10 +213,11 @@ const gameplayModule = (() => {
             largeCellsClassList = loadedGame.largeCellsClassList;
 
             for (i = 0; i < smallCells.length; i++) {
-                smallCells[i].classList.add(Object.values(smallCellsClassList[i])[1]); //better way to do this? What if class isn't always in [1] position?
+                smallCells[i].classList.add(Object.values(smallCellsClassList[i])[1]);
             }
             for (i = 0; i < largeCells.length; i++) {
-                largeCells[i].classList.add(Object.values(largeCellsClassList[i])[1]); //same as above. Also doesn't it get saved as array? So why object.values?
+                largeCells[i].classList.add(Object.values(largeCellsClassList[i])[1]);
+                console.log(Object.values(largeCellsClassList[i])[1]);
             }
 
             largeCells.forEach(section => {
@@ -252,11 +252,9 @@ const gameplayModule = (() => {
 
         if (playerCount === 2 || xTurn) doMove(cell, largeCellIndex);
 
-        events.publish('saveGame', getGameState());
-        if (playerCount === 1) {
+        if (playerCount === 1 && !xTurn) {
             setTimeout(function() {
-                checkCompMove(largeCellIndex);
-                events.publish('saveGame', getGameState());
+                checkCompMove();
             }, 300);
         }
     }
@@ -270,8 +268,14 @@ const gameplayModule = (() => {
         else placeMarker(cell, currentPlayer);
 
         if (checkSectionWin(cell, currentPlayer, playedCellIndex)) placeSectionWinMarker(cell, currentPlayerWin);
-        if (checkGameWin(currentPlayerWin)) { events.publish('endGame', [false, currentPlayer]); return; }
-        if (checkDraw()) { events.publish('endGame', [true, currentPlayer]); return; }
+        if (checkGameWin(currentPlayerWin)) {
+            events.publish('endGame', [false, currentPlayer]);
+            return;
+        }
+        if (checkDraw()) {
+            events.publish('endGame', [true, currentPlayer]);
+            return;
+        }
 
         switchTurn();
 
@@ -282,9 +286,10 @@ const gameplayModule = (() => {
             setPlayableSection(playedCellIndex, false);
             events.publish('playableSection', [playedCellIndex, false]);
         }
+        events.publish('saveGame', getGameState());
     }
 
-    function checkCompMove(largeCellIndex) {
+    function checkCompMove() {
         const compMove = computerMove.getCompMove(playedCellIndex);
         playedCellIndex = compMove.playedCellIndex;
         doMove(compMove.cell, compMove.largeCellIndex);
@@ -301,7 +306,7 @@ const gameplayModule = (() => {
     }
 
     function checkSectionWin(cell, currentPlayer, playedCellIndex) {
-        const conquestMode = gameIndicatorsModule.getConquestMode();
+        const conquestMode = gameHUDModule.getConquestMode();
         if (!conquestMode) {
             if (cell.parentNode.classList.contains('X-win') || cell.parentNode.classList.contains('O-win')) {
                 return false;
@@ -369,12 +374,11 @@ const gameplayModule = (() => {
         return {
             xTurn,
             playedCellIndex,
-            conquestMode: gameIndicatorsModule.getConquestMode(),
+            conquestMode: gameHUDModule.getConquestMode(),
             smallCellsClassList,
             largeCellsClassList
         };
     }
-
 })();
 
 const computerMove = (() => {
@@ -395,31 +399,31 @@ const computerMove = (() => {
 
     function getCompMove(playedCellIndex) {
         let cellScore = [];
-        let validCells = getValidCells(playedCellIndex);
-        if (validCells.length === 0) validCells = getAnyCell();
+        let validCells = _getValidCells(playedCellIndex);
+        if (validCells.length === 0) validCells = _getAnyCell();
 
         let option = 0;
         validCells.forEach(cell => {
             let cellIndex = Array.prototype.indexOf.call(cell.parentNode.children, cell);
             cellScore.push({
                 option: option,
-                score: getCellScore(cellIndex, playedCellIndex)
+                score: _getCellScore(cellIndex, playedCellIndex)
             });
             option++;
         });
 
-        const newCell = chooseBestScore(validCells, cellScore);
+        const newCell = _chooseBestScore(validCells, cellScore);
         const newLargeCellIndex = Array.prototype.indexOf.call(newCell.parentNode.parentNode.children, newCell.parentNode);
         const newPlayedCellIndex = Array.prototype.indexOf.call(newCell.parentNode.children, newCell);
         return { cell: newCell, largeCellIndex: newLargeCellIndex, playedCellIndex: newPlayedCellIndex }
     }
 
-    function getValidCells(playedCellIndex) {
+    function _getValidCells(playedCellIndex) {
         //returns an array of numbers of empty cells in given gameboard section
         return Array.from(largeCells[playedCellIndex].children)
             .map(cell => {
                 if (!cell.classList.contains('X') && !cell.classList.contains('O')) {
-                    return cell; //Array.prototype.indexOf.call(cell.parentNode.children, cell);
+                    return cell;
                 }
             })
             .filter(index => {
@@ -427,7 +431,7 @@ const computerMove = (() => {
             });
     }
 
-    function getAnyCell() {
+    function _getAnyCell() {
         return Array.from(smallCells)
             .map(cell => {
                 if (!cell.classList.contains('X') && !cell.classList.contains('O')) {
@@ -439,37 +443,37 @@ const computerMove = (() => {
             });
     }
 
-    function getCellScore(cellIndex, playedCellIndex) {
+    function _getCellScore(cellIndex, playedCellIndex) {
         let score = 0;
-        if (conquestMode || !sectionWon(cellIndex, ['X-win', 'O-win'])) {
-            score -= twoInARow(cellIndex, 'X'); //Don't send to section where X can win
-            score -= twoInARow(cellIndex, 'O'); //Don't send to section where X could block O win
+        if (conquestMode || !_sectionWon(cellIndex, ['X-win', 'O-win'])) {
+            score -= _twoInARow(cellIndex, 'X'); //Don't send to section where X can win
+            score -= _twoInARow(cellIndex, 'O'); //Don't send to section where X could block O win
         }
         if (!conquestMode) {
-            if (sectionWon(cellIndex, ['X-win', 'O-win'])) score++; //Send to already won sections
+            if (_sectionWon(cellIndex, ['X-win', 'O-win'])) score++; //Send to already won sections
         }
-        if (conquestMode || !sectionWon(playedCellIndex, ['X-win', 'O-win'])) {
-            if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //Play in cell if it could win section
-            if (winCurrentSection(playedCellIndex, cellIndex, 'X')) score++; //Play in cell if it blocks opponent from winning section
+        if (conquestMode || !_sectionWon(playedCellIndex, ['X-win', 'O-win'])) {
+            if (_winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 2; //Play in cell if it could win section
+            if (_winCurrentSection(playedCellIndex, cellIndex, 'X')) score++; //Play in cell if it blocks opponent from winning section
         }
-        if (fullSection(cellIndex)) score -= 2; // Don't send to already full section
+        if (_fullSection(cellIndex)) score -= 2; // Don't send to already full section
 
-        if (winGame(cellIndex, 'X-win')) { //Don't send to section where player can win
+        if (_winGame(cellIndex, 'X-win')) { //Don't send to section where player can win
             score -= 2;
-            if (twoInARow(cellIndex, 'X') > 0) score -= 100;
+            if (_twoInARow(cellIndex, 'X') > 0) score -= 100;
         }
-        if (winGame(cellIndex, 'O-win')) { //Don't send to sesction where player can block comp win
+        if (_winGame(cellIndex, 'O-win')) { //Don't send to section where player can block comp win
             score -= 2;
-            if (twoInARow(cellIndex, 'O') > 0) score -= 100;
+            if (_twoInARow(cellIndex, 'O') > 0) score -= 100;
         }
-        if (winGame(playedCellIndex, 'O-win')) {
-            if (winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 9999; //Absolutely win game if possible
-            if (winCurrentSection(playedCellIndex, cellIndex, 'X')) score += 100; //Block opponent win game option
+        if (_winGame(playedCellIndex, 'O-win')) {
+            if (_winCurrentSection(playedCellIndex, cellIndex, 'O')) score += 9999; //Absolutely win game if possible
+            if (_winCurrentSection(playedCellIndex, cellIndex, 'X')) score += 100; //Block opponent win game option
         }
         return score;
     }
 
-    function twoInARow(cellIndex, marker) {
+    function _twoInARow(cellIndex, marker) {
         let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
             //return array of how many in each combination are X's (or O's) and Empty
@@ -484,7 +488,7 @@ const computerMove = (() => {
         return counter;
     }
 
-    function winCurrentSection(playedCellIndex, cellIndex, compMarker) {
+    function _winCurrentSection(playedCellIndex, cellIndex, compMarker) {
         let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
             //return array of how many in each combination are O's and Empty
@@ -501,18 +505,18 @@ const computerMove = (() => {
         if (counter > 0) return true;
     }
 
-    function fullSection(cellIndex) {
+    function _fullSection(cellIndex) {
         if (isNaN(cellIndex)) return true;
         return Array.from(largeCells[cellIndex].children).every(child => {
             return child.classList.contains('X') || child.classList.contains('O');
         });
     }
 
-    function sectionWon(index, classes) {
+    function _sectionWon(index, classes) {
         return classes.some(element => largeCells[index].classList.contains(element));
     }
 
-    function winGame(section, marker) {
+    function _winGame(section, marker) {
         let counter = 0;
         WINNING_COMBINATIONS.forEach(combination => {
             //return array of how many in each combination are O's and Empty
@@ -526,19 +530,19 @@ const computerMove = (() => {
                 if (cellChecker[0] === 2 && cellChecker[1] === 1) counter++;
             }
         });
-        if (counter > 0 && !sectionWon(section, ['X-win', 'O-win'])) return true;
+        if (counter > 0 && !_sectionWon(section, ['X-win', 'O-win'])) return true;
     }
 
-    function chooseBestScore(validCells, cellScore) {
+    function _chooseBestScore(validCells, cellScore) {
         cellScore.sort((a, b) => {
             return a.score > b.score ? -1 : 1;
         });
         let sameScores = cellScore.filter(cell => cell.score === cellScore[0].score).length;
-        if (sameScores !== 1) return resolveTies(sameScores, validCells, cellScore);
+        if (sameScores !== 1) return _resolveTies(sameScores, validCells, cellScore);
         else return validCells[cellScore[0].option];
     }
 
-    function resolveTies(sameScores, validCells, cellScore) {
+    function _resolveTies(sameScores, validCells, cellScore) {
         const rand = Math.floor(Math.random() * sameScores);
         return validCells[cellScore[rand].option];
     }
