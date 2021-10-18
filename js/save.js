@@ -66,7 +66,7 @@ const gameParams = (() => {
         root.style.setProperty("--base-background-color", theme.baseBackgroundColor || "linear-gradient(#F2D9CB,#33AAA1)");
         root.style.setProperty("--button-color", theme.buttonColor || "#0E535A");
         root.style.setProperty("--button-text-color", theme.buttonTextColor || "white");
-        root.style.setProperty("--button-border-color", theme.buttonBorderColor || "none");
+        root.style.setProperty("--button-border-color", theme.buttonBorderColor || "#0E535A");
         root.style.setProperty("--button-hover-shadow", theme.buttonHoverShadow || "0px 0px 10px black inset");
         root.style.setProperty("--large-gameboard-color", theme.largeGameboardColor || "black");
         root.style.setProperty("--small-gameboards-color", theme.smallGameboardsColor || "black");
